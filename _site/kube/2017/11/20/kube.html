@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <!--[if lte IE 9]><meta http-equiv="refresh" content="0;url=/ie.html"><![endif]-->
 
-    <title>{{ page.title }}</title>
+    <title>Kube部署一个APP</title>
     <meta name="description" content="">
 
     <link rel="stylesheet" type="text/css" href="/assets/css/style.css">
@@ -41,25 +41,48 @@
         </form>
 
         <nav id="pl__container">
-        {% for post in site.posts %}
-          <a class="{{ post.categories }} pl__all" href="{{ post.url }}">
+        
+          <a class="kube pl__all" href="/kube/2017/11/20/kube.html">
             <span class="pl__circle"></span>
-            <span class="pl__title">{{ post.title }}</span>
-            <span class="pl__date">{{ post.date | date: "%Y %b" }}</span>
+            <span class="pl__title">Kube部署一个APP</span>
+            <span class="pl__date">2017 Nov</span>
           </a>
-        {% endfor %}
+        
+          <a class="java pl__all" href="/java/2017/11/09/build-with-spring-boot.html">
+            <span class="pl__circle"></span>
+            <span class="pl__title">用SpringBoot构建JavaAPP-上传提取Emails</span>
+            <span class="pl__date">2017 Nov</span>
+          </a>
+        
+          <a class="java pl__all" href="/java/2016/04/12/awesome-java.html">
+            <span class="pl__circle"></span>
+            <span class="pl__title">Awesome Java</span>
+            <span class="pl__date">2016 Apr</span>
+          </a>
+        
+          <a class="thought pl__all" href="/thought/2015/03/09/welcome-to-jekyll.html">
+            <span class="pl__circle"></span>
+            <span class="pl__title">Welcome to Jekyll!</span>
+            <span class="pl__date">2015 Mar</span>
+          </a>
+        
         </nav>
       </div> <!-- end #posts-list -->
     </aside> <!-- end #sidebar -->
 
     <div id="post">
       <div id="pjax">
-        {{ content }}
+        <article id="post__content">
+  <h1 id="post__title" data-identifier="20171120">Kube部署一个APP</h1>
+  <p>Hello kube</p>
+
+</article>
+
 
         <div id="post__share">
-          <a id="icon-twitter" class="fontello" href="https://twitter.com/intent/tweet?url=mozillo{{ page.url }}&text={{ page.title }}" target="_blank"></a>
+          <a id="icon-twitter" class="fontello" href="https://twitter.com/intent/tweet?url=mozillo/kube/2017/11/20/kube.html&text=Kube部署一个APP" target="_blank"></a>
           <a id="icon-cc" class="fontello" href="http://creativecommons.org/licenses/by-nc-sa/3.0" target="_blank"></a>
-          <a id="icon-weibo" class="fontello" href="http://v.t.sina.com.cn/share/share.php?mot__{{ page.url }}&title={{ page.title }}" target="_blank"></a>
+          <a id="icon-weibo" class="fontello" href="http://v.t.sina.com.cn/share/share.php?mot__/kube/2017/11/20/kube.html&title=Kube部署一个APP" target="_blank"></a>
         </div>
 
         <div id="disqus_thread"></div>
@@ -67,7 +90,7 @@
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'about-mozillo'; // required: replace example with your forum shortname
             // var disqus_developer = 1; // Comment out when the site is live
-            var disqus_identifier = "{{ page.url }}";
+            var disqus_identifier = "/kube/2017/11/20/kube.html";
 
             /* * * DON'T EDIT BELOW THIS LINE * * */
             (function() {

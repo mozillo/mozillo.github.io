@@ -6,9 +6,1336 @@
     <atom:link href="place_your_blog_url_here/rss.xml" rel="self" type="application/rss+xml" />
     <description>place_your_blog_description_here</description>
     <language>place_your_blog_language_here</language>
-    <pubDate>Tue, 21 Nov 2017 08:29:56 +0800</pubDate>
-    <lastBuildDate>Tue, 21 Nov 2017 08:29:56 +0800</lastBuildDate>
+    <pubDate>Tue, 21 Nov 2017 10:52:14 +0800</pubDate>
+    <lastBuildDate>Tue, 21 Nov 2017 10:52:14 +0800</lastBuildDate>
 
+    
+    <item>
+      <title>Kube部署一个APP</title>
+      <link>place_your_blog_url_here/kube/2017/11/20/kube.html</link>
+      <pubDate>20 Nov 2017</pubDate>
+      <author>place_your_name_here</author>
+      <guid>place_your_blog_url_here/kube/2017/11/20/kube</guid>
+      <description>&lt;p&gt;Hello kube&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>用SpringBoot构建JavaAPP-上传提取Emails</title>
+      <link>place_your_blog_url_here/java/2017/11/09/build-with-spring-boot.html</link>
+      <pubDate>09 Nov 2017</pubDate>
+      <author>place_your_name_here</author>
+      <guid>place_your_blog_url_here/java/2017/11/09/build-with-spring-boot</guid>
+      <description>&lt;p&gt;构建一个JavaWeb项目变得很简单。现在只需要安装Spring Boot。&lt;/p&gt;
+
+&lt;p&gt;如果加上上传与解析的话。可以用来做一些文本处理的事情，比如提取Email列表。&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-java&quot; data-lang=&quot;java&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;kn&quot;&gt;package&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;com.jingqi100.jqcloud.api&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.springframework.web.bind.annotation.GetMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.springframework.web.bind.annotation.RequestMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.springframework.web.bind.annotation.RequestParam&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;org.springframework.web.bind.annotation.RestController&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.io.*&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.regex.Matcher&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;java.util.regex.Pattern&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+
+&lt;span class=&quot;nd&quot;&gt;@RequestMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/parse&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nd&quot;&gt;@RestController&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ParseController&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+
+    &lt;span class=&quot;nd&quot;&gt;@GetMapping&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/text&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;textParse&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nd&quot;&gt;@RequestParam&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;path&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;all&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newNath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;/Users/mot/Desktop/word2txt/&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;folder&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newNath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;File&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listOfFiles&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;folder&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;listFiles&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;listOfFiles&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;length&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;listOfFiles&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tmpFile&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newNath&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;listOfFiles&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;parseFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmpFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;//    @GetMapping(value = &amp;quot;/eml&amp;quot;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;//    public void emlParse() {&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;//        MimeMessage eml = new MimeMessage();&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;//    }&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;parseFile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;println&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;#########################Start scan: &amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Integer&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;counter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;List&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ArrayList&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;();&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;FileInputStream&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;fis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FileInputStream&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;filePath&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FileNotFoundException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// e.printStackTrace();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;InputStreamReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;isr&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;InputStreamReader&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;UTF-8&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;UnsupportedEncodingException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// e.printStackTrace();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;BufferedReader&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;br&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BufferedReader&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;isr&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;try&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;while&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;br&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readLine&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;br&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;readLine&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+                &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;getEmailFromString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;isEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++;&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;all&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;trim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+                    &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Found email!!!!!: %s \n&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;trim&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;());&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;c1&quot;&gt;// System.out.format(&amp;quot;Found line: %s \n&amp;quot;, email);&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;n&quot;&gt;fis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;close&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;IOException&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;e&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;c1&quot;&gt;// e.printStackTrace();&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+        &lt;span class=&quot;n&quot;&gt;System&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;out&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;format&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;Get row count: %d \n&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;counter&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;list&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;toArray&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;isEmail&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;){&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;email&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;equals&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;false&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Pattern&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pattern&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;([a-zA-Z0-9\\.\\_\\%\\-\\_]+@[a-zA-Z0-9\\.\\-\\_]+\\.[a-zA-Z0-9\\_\\-]+)\\s{0,}&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pattern&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MULTILINE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Matcher&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;matcher&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;email&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;matches&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;();&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+    &lt;span class=&quot;kd&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;getEmailFromString&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;String&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;null&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Pattern&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pattern&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;compile&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;([a-zA-Z0-9\\.\\_\\%\\-\\_]+@[a-zA-Z0-9\\.\\-\\_]+\\.[a-zA-Z0-9\\_\\-]+)\\s{0,}&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Pattern&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;MULTILINE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;n&quot;&gt;Matcher&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;matcher&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+
+        &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;find&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;())&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;na&quot;&gt;group&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;);&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+</description>
+    </item>
+    
+    <item>
+      <title>Awesome Java</title>
+      <link>place_your_blog_url_here/java/2016/04/12/awesome-java.html</link>
+      <pubDate>12 Apr 2016</pubDate>
+      <author>place_your_name_here</author>
+      <guid>place_your_blog_url_here/java/2016/04/12/awesome-java</guid>
+      <description>&lt;p&gt;&lt;a href=&quot;https://github.com/sindresorhus/awesome&quot;&gt;&lt;img src=&quot;https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg&quot; alt=&quot;Awesome&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;A curated list of awesome Java frameworks, libraries and software.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;#awesome-java&quot;&gt;Awesome Java&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#bean-mapping&quot;&gt;Bean Mapping&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#build&quot;&gt;Build&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#bytecode-manipulation&quot;&gt;Bytecode Manipulation&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#caching&quot;&gt;Caching&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#cluster-management&quot;&gt;Cluster Management&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#code-analysis&quot;&gt;Code Analysis&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#code-coverage&quot;&gt;Code Coverage&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#code-generators&quot;&gt;Code Generators&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#command-line-argument-parsers&quot;&gt;Command-line Argument Parsers&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#compiler-compiler&quot;&gt;Compiler-compiler&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#configuration&quot;&gt;Configuration&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#constraint-satisfaction-problem-solver&quot;&gt;Constraint Satisfaction Problem Solver&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#csv&quot;&gt;CSV&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#data-structures&quot;&gt;Data structures&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#database&quot;&gt;Database&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#date-and-time&quot;&gt;Date and Time&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#dependency-injection&quot;&gt;Dependency Injection&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#development&quot;&gt;Development&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#distributed-applications&quot;&gt;Distributed Applications&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#distributed-transactions&quot;&gt;Distributed Transactions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#distribution&quot;&gt;Distribution&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#document-processing&quot;&gt;Document Processing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#formal-verification&quot;&gt;Formal Verification&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#functional-programming&quot;&gt;Functional Programming&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#game-development&quot;&gt;Game Development&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#geospatial&quot;&gt;Geospatial&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#gui&quot;&gt;GUI&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#high-performance&quot;&gt;High Performance&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#http-clients&quot;&gt;HTTP Clients&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#hypermedia-types&quot;&gt;Hypermedia Types&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ide&quot;&gt;IDE&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#imagery&quot;&gt;Imagery&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#json-processing&quot;&gt;JSON Processing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#json&quot;&gt;JSON&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#jvm-and-jdk&quot;&gt;JVM and JDK&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#logging&quot;&gt;Logging&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#machine-learning&quot;&gt;Machine Learning&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#messaging&quot;&gt;Messaging&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#microservice&quot;&gt;Microservice&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#miscellaneous&quot;&gt;Miscellaneous&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#monitoring&quot;&gt;Monitoring&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#native&quot;&gt;Native&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#natural-language-processing&quot;&gt;Natural Language Processing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#networking&quot;&gt;Networking&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#orm&quot;&gt;ORM&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#paas&quot;&gt;PaaS&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#pdf&quot;&gt;PDF&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#performance-analysis&quot;&gt;Performance analysis&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#platform&quot;&gt;Platform&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#reactive-libraries&quot;&gt;Reactive libraries&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#rest-frameworks&quot;&gt;REST Frameworks&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#science&quot;&gt;Science&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#search&quot;&gt;Search&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#security&quot;&gt;Security&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#serialization&quot;&gt;Serialization&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#server&quot;&gt;Server&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#template-engine&quot;&gt;Template Engine&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#testing&quot;&gt;Testing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#utility&quot;&gt;Utility&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#version-managers&quot;&gt;Version Managers&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#web-crawling&quot;&gt;Web Crawling&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#web-frameworks&quot;&gt;Web Frameworks&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#resources&quot;&gt;Resources&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#awesome-lists&quot;&gt;Awesome Lists&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#communities&quot;&gt;Communities&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#frontends&quot;&gt;Frontends&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#influential-books&quot;&gt;Influential Books&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#podcasts-and-screencasts&quot;&gt;Podcasts and Screencasts&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#twitter&quot;&gt;Twitter&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#websites&quot;&gt;Websites&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#contributing&quot;&gt;Contributing&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;bean-mapping&quot;&gt;Bean Mapping&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks that ease bean mapping.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/DozerMapper/dozer/&quot;&gt;Dozer&lt;/a&gt; - Mapper that copies data from one object to another using annotations and API or XML configuration.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jmapper-framework.github.io/jmapper-core/&quot;&gt;JMapper&lt;/a&gt; - Uses byte code manipulation for lightning-fast mapping. Supports annotations and API or XML configuration.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mapstruct/mapstruct&quot;&gt;MapStruct&lt;/a&gt; - Code generator that simplifies mappings between different bean types, based on a convention-over-configuration approach.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jhalterman/modelmapper&quot;&gt;ModelMapper&lt;/a&gt; - Intelligent object mapping library that automatically maps objects to each other.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/orika-mapper/orika&quot;&gt;Orika&lt;/a&gt; - JavaBean-mapping framework that recursively copies (among other capabilities) data from one object to another.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/xebia-france/selma&quot;&gt;Selma&lt;/a&gt; - Annotation processor-based bean mapper.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;build&quot;&gt;Build&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that handle the build cycle and dependencies of an application.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://maven.apache.org/&quot;&gt;Apache Maven&lt;/a&gt; - Declarative build and dependency management that favors convention over configuration. It might be preferable to Apache Ant, which uses a rather procedural approach and can be difficult to maintain.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://bazel.io&quot;&gt;Bazel&lt;/a&gt; - Tool from Google that builds code quickly and reliably.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gradle.org/&quot;&gt;Gradle&lt;/a&gt; - Incremental builds programmed via Groovy instead of declaring XML. Works well with Maven’s dependency management.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;bytecode-manipulation&quot;&gt;Bytecode Manipulation&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries to manipulate bytecode programmatically.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://asm.ow2.org/&quot;&gt;ASM&lt;/a&gt; - All-purpose, low-level bytecode manipulation and analysis.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://bytebuddy.net/&quot;&gt;Byte Buddy&lt;/a&gt; - Further simplifies bytecode generation with a fluent API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://byteman.jboss.org/&quot;&gt;Byteman&lt;/a&gt; - Manipulate bytecode at runtime via DSL (rules); mainly for testing/troubleshooting.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/cglib/cglib&quot;&gt;cglib&lt;/a&gt; - Bytecode generation library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jboss-javassist.github.io/javassist/&quot;&gt;Javassist&lt;/a&gt; - Tries to simplify bytecode editing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;caching&quot;&gt;Caching&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that provide caching facilities.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ben-manes/caffeine&quot;&gt;Caffeine&lt;/a&gt; - High-performance, near-optimal caching library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ehcache.org/&quot;&gt;Ehcache&lt;/a&gt; - Distributed general-purpose cache.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://infinispan.org/&quot;&gt;Infinispan&lt;/a&gt; - Highly concurrent key/value datastore used for caching.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;cluster-management&quot;&gt;Cluster Management&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks that can dynamically manage applications inside of a cluster.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aurora.apache.org/&quot;&gt;Apache Aurora&lt;/a&gt; - Mesos framework for long-running services and cron jobs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mesos.apache.org/&quot;&gt;Apache Mesos&lt;/a&gt; - Abstracts CPU, memory, storage, and other compute resources away from machines.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://getsingularity.com/&quot;&gt;Singularity&lt;/a&gt; - Mesos framework that makes deployment and operations easy. It supports web services, background workers, scheduled jobs, and one-off tasks.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;code-analysis&quot;&gt;Code Analysis&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that provide metrics and quality measurements.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/checkstyle/checkstyle&quot;&gt;Checkstyle&lt;/a&gt; - Static analysis of coding conventions and standards.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/error-prone&quot;&gt;Error Prone&lt;/a&gt; - Catches common programming mistakes as compile-time errors.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/spotbugs/spotbugs&quot;&gt;Spotbugs&lt;/a&gt; - Static analysis of bytecode to find potential bugs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/facebook/infer&quot;&gt;Infer&lt;/a&gt; - Modern static analysis tool for verifying the correctness of code.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jqassistant.org/&quot;&gt;jQAssistant&lt;/a&gt; - Static code analysis with Neo4J-based query language.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/pmd/pmd&quot;&gt;PMD&lt;/a&gt; - Source code analysis for finding bad coding practices.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.sourcetrail.com&quot;&gt;Sourcetrail &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Visual source code navigator.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/INRIA/spoon/&quot;&gt;Spoon&lt;/a&gt; - Library for analyzing and transforming Java source code.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;code-coverage&quot;&gt;Code Coverage&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks and tools that enable code coverage metrics collection for test suites.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.atlassian.com/software/clover/overview&quot;&gt;Clover &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Relies on source-code instrumentation instead of bytecode instrumentation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cobertura.github.io/cobertura/&quot;&gt;Cobertura&lt;/a&gt; - Relies on offline (or static) bytecode instrumentation and class loading to collect code coverage metrics.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://eclemma.org/jacoco/&quot;&gt;JaCoCo&lt;/a&gt; - Framework that enables collection of code coverage metrics, using both offline and runtime bytecode instrumentation.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;code-generators&quot;&gt;Code Generators&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that generate patterns for repetitive code in order to reduce verbosity and error-proneness.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/sviperll/adt4j&quot;&gt;ADT4J&lt;/a&gt; - JSR-269 code generator for algebraic data types.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/auto&quot;&gt;Auto&lt;/a&gt; - Generates factory, service, and value classes.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/FreeBuilder&quot;&gt;FreeBuilder&lt;/a&gt; - Automatically generates the Builder pattern.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://immutables.github.io/&quot;&gt;Immutables&lt;/a&gt; - Annotation processors to generate simple, safe and consistent value objects.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/square/javapoet&quot;&gt;JavaPoet&lt;/a&gt; - API to generate source files.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jhipster/generator-jhipster&quot;&gt;JHipster&lt;/a&gt; - Yeoman source code generator for Spring Boot and AngularJS.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.joda.org/joda-beans/&quot;&gt;Joda-Beans&lt;/a&gt; - Small framework that adds queryable properties to Java, enhancing JavaBeans.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://projectlombok.org/&quot;&gt;Lombok&lt;/a&gt; - Code generator that aims to reduce verbosity.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;command-line-argument-parsers&quot;&gt;Command-line Argument Parsers&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that make it easy to parse command line options, arguments, etc.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/airlift/airline&quot;&gt;Airline&lt;/a&gt; - Annotation-based framework for parsing Git-like command-line arguments.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://args4j.kohsuke.org/&quot;&gt;args4j&lt;/a&gt; - Small library to parse command-line arguments.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jcommander.org/&quot;&gt;JCommander&lt;/a&gt; - Command-line argument-parsing framework with custom types and validation via implementing interfaces.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pholser.github.io/jopt-simple/&quot;&gt;JOpt Simple&lt;/a&gt; - Simple parser that uses the POSIX getopt() and GNU getopt_long() syntaxes. Uses a fluent API instead of annotations.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://picocli.info/&quot;&gt;picocli&lt;/a&gt; - ANSI colors and styles in usage help. Can be included as source to avoid dependency. Annotation-based, POSIX/GNU/any syntax, subcommands, strong typing for both options and positional args.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;compiler-compiler&quot;&gt;Compiler-compiler&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks that help to create parsers, interpreters or compilers.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.antlr.org/&quot;&gt;ANTLR&lt;/a&gt; - Complex full-featured framework for top-down parsing.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jflex.de/&quot;&gt;JFlex&lt;/a&gt; - A lexical analyzer generator.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;configuration&quot;&gt;Configuration&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that provide external configuration.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/line/centraldogma&quot;&gt;centraldogma&lt;/a&gt; - Highly-available version-controlled service configuration repository based on Git, ZooKeeper and HTTP/2.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/cfg4j/cfg4j&quot;&gt;cfg4j&lt;/a&gt; - Modern configuration library for distributed apps written in Java.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/typesafehub/config&quot;&gt;config&lt;/a&gt; - Configuration library for JVM languages.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/shyiko/dotenv&quot;&gt;dotenv&lt;/a&gt; - A twelve-factor configuration library for Java.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://ini4j.sourceforge.net/&quot;&gt;ini4j&lt;/a&gt; - Provides an API for handling Windows’ INI files.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mariomac/kaconf&quot;&gt;KAConf&lt;/a&gt; - Annotation-based configuration system for Java and Kotlin.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/lviggiano/owner&quot;&gt;owner&lt;/a&gt; - Reduces boilerplate of properties.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;constraint-satisfaction-problem-solver&quot;&gt;Constraint Satisfaction Problem Solver&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that help with implementing optimization and satisfiability problems.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://choco-solver.org/&quot;&gt;Choco&lt;/a&gt; - Off-the-shelf constraint satisfaction problem solver that uses constraint programming techniques.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/radsz/jacop/&quot;&gt;JaCoP&lt;/a&gt; - Includes an interface for the FlatZinc language, enabling it to execute MiniZinc models.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.optaplanner.org/&quot;&gt;OptaPlanner&lt;/a&gt; - Business planning and resource scheduling optimization solver.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;csv&quot;&gt;CSV&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks and libraries that simplify reading/writing CSV data.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/FasterXML/jackson-dataformat-csv&quot;&gt;jackson-dataformat-csv&lt;/a&gt; - Jackson extension for reading and writing CSV.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://opencsv.sourceforge.net&quot;&gt;opencsv&lt;/a&gt; - Simple CSV parser.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://super-csv.github.io/super-csv/&quot;&gt;Super CSV&lt;/a&gt; - Powerful CSV parser with support for Dozer, Joda-Time and Java 8.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/uniVocity/univocity-parsers&quot;&gt;uniVocity-parsers&lt;/a&gt; - One of the fastest and most feature-complete parsers. Also comes with parsers for TSV and fixed-width records.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;database&quot;&gt;Database&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Everything that simplifies interactions with the database.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://phoenix.apache.org/&quot;&gt;Apache Phoenix&lt;/a&gt; - High-performance relational database layer over HBase for low-latency applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/OpenHFT/Chronicle-Map&quot;&gt;Chronicle Map&lt;/a&gt; - Efficient, in-memory (opt. persisted to disk), off-heap key-value store.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/eXist-db/exist&quot;&gt;eXist&lt;/a&gt; - A NoSQL document database and application platform.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/vladmihalcea/flexy-pool&quot;&gt;FlexyPool&lt;/a&gt; - Brings metrics and failover strategies to the most common connection pooling solutions.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://flywaydb.org/&quot;&gt;Flyway&lt;/a&gt; - Simple database migration tool.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://h2database.com/&quot;&gt;H2&lt;/a&gt; - Small SQL database notable for its in-memory functionality.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/brettwooldridge/HikariCP&quot;&gt;HikariCP&lt;/a&gt; - High-performance JDBC connection pool.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jdbi.org/&quot;&gt;JDBI&lt;/a&gt; - Convenient abstraction of JDBC.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/xetorthio/jedis&quot;&gt;Jedis&lt;/a&gt; - Small client for interaction with Redis, with methods for commands.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/searchbox-io/Jest&quot;&gt;Jest&lt;/a&gt; - Client for the Elasticsearch REST API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/justinsb/jetcd&quot;&gt;jetcd&lt;/a&gt; - Client library for etcd.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/my2iu/Jinq&quot;&gt;Jinq&lt;/a&gt; - Typesafe database queries via symbolic execution of Java 8 Lambdas (on top of JPA or jOOQ).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.jooq.org/&quot;&gt;jOOQ&lt;/a&gt; - Generates typesafe code based on SQL schema.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.liquibase.org/&quot;&gt;Liquibase&lt;/a&gt; - Database-independent library for tracking, managing and applying database schema changes.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.mapdb.org/&quot;&gt;MapDB&lt;/a&gt; - Embedded database engine that provides concurrent collections backed on disk or in off-heap memory.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/vorburger/MariaDB4j/&quot;&gt;MariaDB4j&lt;/a&gt; - Launcher for MariaDB that requires no installation or external dependencies.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://orientdb.com/orientdb/&quot;&gt;OrientDB&lt;/a&gt; - Embeddable distributed database written on top of Hazelcast.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/prestodb/presto&quot;&gt;Presto&lt;/a&gt; - Distributed SQL query engine for big data.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.querydsl.com/&quot;&gt;Querydsl&lt;/a&gt; - Typesafe unified queries.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/realm/realm-java&quot;&gt;Realm&lt;/a&gt; - Mobile database to run directly inside phones, tablets or wearables.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mrniko/redisson&quot;&gt;Redisson&lt;/a&gt; - Allows for distributed and scalable data structures on top of a Redis server.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/requery/requery&quot;&gt;requery&lt;/a&gt; - A modern, lightweight but powerful object mapping and SQL generator. Easily map to or create databases, or perform queries and updates from any Java-using platform.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/speedment/speedment&quot;&gt;Speedment&lt;/a&gt; - Database access library that utilizes Java 8’s Stream API for querying.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://sql2o.org/&quot;&gt;sql2o&lt;/a&gt; - Thin JDBC wrapper that simplifies database access and provides simple mapping of ResultSets to POJOs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.vibur.org/&quot;&gt;Vibur DBCP&lt;/a&gt; - JDBC connection pool library with advanced performance monitoring capabilities.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jetbrains.github.io/xodus/&quot;&gt;Xodus&lt;/a&gt; - Highly concurrent transactional schema-less and ACID-compliant embedded database.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;data-structures&quot;&gt;Data Structures&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Efficient and specific data structures.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://avro.apache.org/&quot;&gt;Apache Avro&lt;/a&gt; - Data interchange format with dynamic typing, untagged data, and absence of manually assigned IDs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://orc.apache.org/&quot;&gt;Apache Orc&lt;/a&gt; - Fast and efficient columnar storage format for Hadoop-based workloads.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://parquet.apache.org/&quot;&gt;Apache Parquet&lt;/a&gt; - Columnar storage format based on assembly algorithms from Google’s paper on Dremel.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://thrift.apache.org/&quot;&gt;Apache Thrift&lt;/a&gt; - Data interchange format that originated at Facebook.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bulldog2011/bigqueue&quot;&gt;Big Queue&lt;/a&gt; - A big, fast and persistent queue based on memory-mapped files.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pcollections.org/&quot;&gt;Persistent Collection&lt;/a&gt; - Persistent and immutable analogue of the Java Collections Framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/protobuf&quot;&gt;Protobuf&lt;/a&gt; - Google’s data interchange format.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/real-logic/simple-binary-encoding&quot;&gt;SBE&lt;/a&gt; - Simple Binary Encoding, one of the fastest message formats around.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/square/tape&quot;&gt;Tape&lt;/a&gt; - A lightning-fast, transactional, file-based FIFO.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/square/wire&quot;&gt;Wire&lt;/a&gt; - Clean, lightweight protocol buffers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;date-and-time&quot;&gt;Date and Time&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries related to handling date and time.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/hypotemoose/almanac-converter&quot;&gt;Almanac Converter&lt;/a&gt; - Simple conversion between different calendar systems.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ical4j/ical4j&quot;&gt;iCal4j&lt;/a&gt; - Parse and build iCalendar &lt;a href=&quot;https://tools.ietf.org/html/rfc5545&quot;&gt;RFC 5545&lt;/a&gt; data models.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ThreeTen/threeten-extra&quot;&gt;ThreeTen-Extra&lt;/a&gt; - Additional date-time classes that complement those in JDK 8.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/MenoData/Time4J&quot;&gt;Time4J&lt;/a&gt; - Advanced date and time library.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;dependency-injection&quot;&gt;Dependency Injection&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that help to realize the &lt;a href=&quot;https://en.wikipedia.org/wiki/Inversion_of_control&quot;&gt;Inversion of Control&lt;/a&gt; paradigm.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://deltaspike.apache.org/&quot;&gt;Apache DeltaSpike&lt;/a&gt; - CDI extension framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://google.github.io/dagger/&quot;&gt;Dagger2&lt;/a&gt; - Compile-time injection framework without reflection.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zsoltherpai/feather&quot;&gt;Feather&lt;/a&gt; - Ultra-lightweight, JSR-330-compliant dependency injection library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Netflix/governator&quot;&gt;Governator&lt;/a&gt; - Extensions and utilities that enhance Google Guice.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/guice&quot;&gt;Guice&lt;/a&gt; - Lightweight and opinionated framework that completes Dagger.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://javaee.github.io/hk2&quot;&gt;HK2&lt;/a&gt; - Lightweight and dynamic dependency injection framework.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;development&quot;&gt;Development&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Augmentation of the development process at a fundamental level.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://eclipse.org/aspectj/&quot;&gt;AspectJ&lt;/a&gt; - Seamless aspect-oriented programming extension.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dcevm.github.io/&quot;&gt;DCEVM&lt;/a&gt; - JVM modification that allows unlimited redefinition of loaded classes at runtime.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando/faux-pas&quot;&gt;Faux Pas&lt;/a&gt; - Library that simplifies error handling by circumventing the issue that none of the functional interfaces in the Java Runtime is allowed by default to throw checked exceptions.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/HotswapProjects/HotswapAgent&quot;&gt;HotswapAgent&lt;/a&gt; - Unlimited runtime class and resource redefinition.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/javaparser/javaparser&quot;&gt;JavaParser&lt;/a&gt; - Parse, modify and generate Java code.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/javaparser/javasymbolsolver&quot;&gt;JavaSymbolSolver&lt;/a&gt; - A symbol solver for Java.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zeroturnaround.com/software/jrebel/&quot;&gt;JRebel &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Instantly reloads code and configuration changes without redeploys.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://noexception.machinezoo.com/&quot;&gt;NoException&lt;/a&gt; - Allows checked exceptions in functional interfaces and converts exceptions to Optional return.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;distributed-applications&quot;&gt;Distributed Applications&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries and frameworks for writing distributed and fault-tolerant applications.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://geode.apache.org/&quot;&gt;Apache Geode&lt;/a&gt; - In-memory data management system that provides reliable asynchronous event notifications and guaranteed message delivery.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://storm.apache.org/&quot;&gt;Apache Storm&lt;/a&gt; - Realtime computation system.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zookeeper.apache.org/&quot;&gt;Apache ZooKeeper&lt;/a&gt; - Coordination service with distributed configuration, synchronization, and naming registry for large distributed systems.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://atomix.io/atomix/&quot;&gt;Atomix&lt;/a&gt; - Fault-tolerant distributed coordination framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.axonframework.org/&quot;&gt;Axon Framework&lt;/a&gt; - Framework for creating CQRS applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://atomix.io/copycat/&quot;&gt;Copycat&lt;/a&gt; - Fault-tolerant state machine replication framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mtakaki/dropwizard-circuitbreaker&quot;&gt;Dropwizard Circuit Breaker&lt;/a&gt; - Circuit breaker design pattern for Dropwizard.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jhalterman/failsafe&quot;&gt;Failsafe&lt;/a&gt; - Simple failure handling with retries and circuit breakers.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://hazelcast.org/&quot;&gt;Hazelcast &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Highly scalable in-memory datagrid with a free open-source version.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Netflix/Hystrix&quot;&gt;Hystrix&lt;/a&gt; - Provides latency and fault tolerance.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.jgroups.org/&quot;&gt;JGroups&lt;/a&gt; - Toolkit for reliable messaging and cluster creation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.orbit.cloud/&quot;&gt;Orbit&lt;/a&gt; - Virtual actors; adds another level of abstraction to traditional actors.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.paralleluniverse.co/quasar/&quot;&gt;Quasar&lt;/a&gt; - Lightweight threads and actors for the JVM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/resilience4j/resilience4j&quot;&gt;resilience4j&lt;/a&gt; - Functional fault tolerance library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Netflix/zuul&quot;&gt;Zuul&lt;/a&gt; - A gateway service that provides dynamic routing, monitoring, resiliency, security, and more.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;distributed-transactions&quot;&gt;Distributed Transactions&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Distributed transactions provide a mechanism for ensuring consistency of data updates in the presence of concurrent access and partial failures.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.atomikos.com&quot;&gt;Atomikos&lt;/a&gt; - Provides transactions for REST, SOA and microservices with support for JTA and XA.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bitronix/btm&quot;&gt;Bitronix&lt;/a&gt; - A simple but complete implementation of the JTA 1.1 API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://narayana.io&quot;&gt;Narayana&lt;/a&gt; - Provides support for traditional ACID and compensation transactions, also complies with JTA, JTS and other standards.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;distribution&quot;&gt;Distribution&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that handle the distribution of applications in native formats.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://bintray.com/&quot;&gt;Bintray &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Version control for binaries that handle publishing. Compatible with Maven or Gradle, with a free plan for open-source software as well as several business plans.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://boxfuse.com&quot;&gt;Boxfuse&lt;/a&gt; - Deployment of JVM applications to AWS using the principles of immutable infrastructure.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.capsule.io/&quot;&gt;Capsule&lt;/a&gt; - Simple and powerful packaging and deployment. A fat JAR on steroids, or a “Docker for Java” that supports JVM-optimized containers.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://search.maven.org/&quot;&gt;Central Repository&lt;/a&gt; - Largest binary component repository available as a free service to the open-source community. Default used by Apache Maven, and available in all other build tools.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://izpack.org/&quot;&gt;IzPack&lt;/a&gt; - Setup authoring tool for cross-platform deployments.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jitpack.io/&quot;&gt;JitPack&lt;/a&gt; - Easy-to-use package repository for GitHub. Builds Maven/Gradle projects on demand and publishes ready-to-use packages.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.sonatype.com/nexus/solution-overview&quot;&gt;Nexus &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Binary management with proxy and caching capabilities.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/libgdx/packr/&quot;&gt;packr&lt;/a&gt; - Packs JARs, assets and the JVM for native distribution on Windows, Linux and Mac OS X.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/brianm/really-executable-jars-maven-plugin&quot;&gt;really-executable-jars-maven-plugin&lt;/a&gt; - Maven plugin for making self-executing JARs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;document-processing&quot;&gt;Document Processing&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that assist with processing office document formats.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://poi.apache.org/&quot;&gt;Apache POI&lt;/a&gt; - Supports OOXML (XLSX, DOCX, PPTX) as well as OLE2 (XLS, DOC or PPT).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://documents4j.com&quot;&gt;documents4j&lt;/a&gt; - API for document format conversion using third-party converters such as MS Word.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.docx4java.org/trac/docx4j&quot;&gt;docx4j&lt;/a&gt; - Create and manipulate Microsoft Open XML files.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;formal-verification&quot;&gt;Formal Verification&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Formal-methods tools: proof assistants, model checking, symbolic execution, etc.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ksen007/janala2&quot;&gt;CATG&lt;/a&gt; - Concolic unit testing engine. Automatically generates unit tests using formal methods.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://types.cs.washington.edu/checker-framework/&quot;&gt;Checker Framework&lt;/a&gt; - Pluggable type systems. Includes nullness types, physical units, immutability types and more.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://plse.cs.washington.edu/daikon/&quot;&gt;Daikon&lt;/a&gt; - Detects likely program invariants and generates JML specs based on those invariants.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://babelfish.arc.nasa.gov/trac/jpf&quot;&gt;Java Path Finder (JPF)&lt;/a&gt; - JVM formal verification tool containing a model checker and more. Created by NASA.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://massoni.computacao.ufcg.edu.br/home/jmlok&quot;&gt;JMLOK 2.0&lt;/a&gt; - Detects inconsistencies between code and JML specification through feedback-directed random tests generation, and suggests a likely cause for each nonconformance detected.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://key-project.org/&quot;&gt;KeY&lt;/a&gt; - Formal software development tool that aims to integrate design, implementation, formal specification, and formal verification of object-oriented software as seamlessly as possible. Uses JML for specification and symbolic execution for verification.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://openjml.github.io/&quot;&gt;OpenJML&lt;/a&gt; - Translates JML specifications into SMT-LIB format and passes the proof problems implied by the program to backend solvers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;functional-programming&quot;&gt;Functional Programming&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that facilitate functional programming.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/aol/cyclops-react&quot;&gt;cyclops-react&lt;/a&gt; - Monad and stream utilities, comprehensions, pattern matching, functional extensions for all JDK collections, future streams, trampolines and much more.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/derive4j/derive4j&quot;&gt;derive4j&lt;/a&gt; - Java 8 annotation processor and framework for deriving algebraic data types constructors, pattern-matching and morphisms.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://bitbucket.org/atlassian/fugue&quot;&gt;Fugue&lt;/a&gt; - Functional extensions to Guava.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.functionaljava.org&quot;&gt;Functional Java&lt;/a&gt; - Implements numerous basic and advanced programming abstractions that assist composition-oriented development.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jOOQ/jOOL&quot;&gt;jOOλ&lt;/a&gt; - Extension to Java 8 that aims to fix gaps in lambda by providing numerous missing types and a rich set of sequential Stream API additions.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/poetix/protonpack&quot;&gt;protonpack&lt;/a&gt; - Collection of stream utilities.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/amaembo/streamex&quot;&gt;StreamEx&lt;/a&gt; - Enhances Java 8 Streams.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.vavr.io/&quot;&gt;Vavr&lt;/a&gt; - Functional component library that provides persistent data types and functional control structures.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;game-development&quot;&gt;Game Development&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks that support the development of games.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jmonkeyengine.org/&quot;&gt;jMonkeyEngine&lt;/a&gt; - Game engine for modern 3D development.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://libgdx.badlogicgames.com/&quot;&gt;libGDX&lt;/a&gt; - All-round cross-platform, high-level framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.lwjgl.org/&quot;&gt;LWJGL&lt;/a&gt; - Robust framework that abstracts libraries like OpenGL/CL/AL.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://almasb.github.io/FXGL/&quot;&gt;FXGL&lt;/a&gt; - JavaFX Game Development Framework.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;geospatial&quot;&gt;Geospatial&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries for working with geospatial data and algorithms.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://sis.apache.org/&quot;&gt;Apache SIS&lt;/a&gt; - Library for developing geospatial applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/davidmoten/geo/&quot;&gt;Geo&lt;/a&gt; - GeoHash utilities in Java.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.geotoolkit.org/&quot;&gt;Geotoolkit.org&lt;/a&gt; - Library for developing geospatial applications. Built on top of the Apache SIS project.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://geotools.org/&quot;&gt;GeoTools&lt;/a&gt; - Library that provides tools for geospatial data.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/graphhopper/graphhopper&quot;&gt;GraphHopper&lt;/a&gt; - Road-routing engine. Used as a Java library or standalone web service.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.h2gis.org/&quot;&gt;H2GIS&lt;/a&gt; - A spatial extension of the H2 database.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://astrapi69.github.io/jgeohash/&quot;&gt;Jgeohash&lt;/a&gt; - Library for using the GeoHash algorithm.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mapsforge/mapsforge/&quot;&gt;Mapsforge&lt;/a&gt; - Map rendering based on OpenStreetMap data.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/locationtech/spatial4j/&quot;&gt;Spatial4j&lt;/a&gt; - General-purpose spatial/geospatial library.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;gui&quot;&gt;GUI&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries to create modern graphical user interfaces.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.oracle.com/technetwork/java/javase/overview/javafx-overview-2158620.html&quot;&gt;JavaFX&lt;/a&gt; - The successor of Swing.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gluonhq.com/open-source/scene-builder/&quot;&gt;Scene Builder&lt;/a&gt; - Visual layout tool for JavaFX applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.eclipse.org/swt/&quot;&gt;SWT&lt;/a&gt; - The Standard Widget Toolkit, a graphical widget toolkit.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;high-performance&quot;&gt;High Performance&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Everything about high-performance computation, from collections to specific libraries.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/real-logic/Agrona&quot;&gt;Agrona&lt;/a&gt; - Data structures and utility methods that are common in high-performance applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lmax-exchange.github.io/disruptor/&quot;&gt;Disruptor&lt;/a&gt; - Inter-thread messaging library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/eclipse/eclipse-collections&quot;&gt;Eclipse Collections&lt;/a&gt; - Collections framework inspired by Smalltalk.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://fastutil.di.unimi.it/&quot;&gt;fastutil&lt;/a&gt; - Fast and compact type-specific collections.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://labs.carrotsearch.com/hppc.html&quot;&gt;HPPC&lt;/a&gt; - Primitive collections.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/JCTools/JCTools&quot;&gt;JCTools&lt;/a&gt; - Concurrency tools currently missing from the JDK.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/OpenHFT/Koloboke&quot;&gt;Koloboke&lt;/a&gt; - Hash sets and hash maps.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;http-clients&quot;&gt;HTTP Clients&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that assist with creating HTTP requests and/or binding responses.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/AsyncHttpClient/async-http-client&quot;&gt;Async Http Client&lt;/a&gt; - Asynchronous HTTP and WebSocket client library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Netflix/feign&quot;&gt;Feign&lt;/a&gt; - HTTP client binder inspired by Retrofit, JAXRS-2.0, and WebSocket.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://square.github.io/okhttp/&quot;&gt;OkHttp&lt;/a&gt; - HTTP+SPDY client.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/B2W-BIT/restQL-core&quot;&gt;restQL-core&lt;/a&gt; - Microservice query language that fetches information from multiple services.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://square.github.io/retrofit/&quot;&gt;Retrofit&lt;/a&gt; - Typesafe REST client.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Netflix/ribbon&quot;&gt;Ribbon&lt;/a&gt; - Client-side IPC library that is battle-tested in cloud.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando/riptide&quot;&gt;Riptide&lt;/a&gt; - Client-side response routing for Spring’s RestTemplate.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;hypermedia-types&quot;&gt;Hypermedia Types&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that handle serialization to hypermedia types.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jsonld-java/jsonld-java&quot;&gt;JSON-LD&lt;/a&gt; - JSON-LD implementation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/eserating/siren4j&quot;&gt;Siren4J&lt;/a&gt; - Library for the Siren specification.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ide&quot;&gt;IDE&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Integrated development environments that try to simplify several aspects of development.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.eclipse.org/&quot;&gt;Eclipse&lt;/a&gt; - Established open-source project with support for lots of plugins and languages.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.jetbrains.com/idea/&quot;&gt;IntelliJ IDEA &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Supports many JVM languages and provides good options for Android development. The commercial edition targets the enterprise sector.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://netbeans.org/&quot;&gt;NetBeans&lt;/a&gt; - Provides integration for several Java SE and EE features, from database access to HTML5.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;imagery&quot;&gt;Imagery&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that assist with the creation, evaluation or manipulation of graphical images.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/thebuzzmedia/imgscalr&quot;&gt;Imgscalr&lt;/a&gt; - Simple, efficient and hardware-accelerated image-scaling library implemented in pure Java 2D.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/nguyenq/tess4j&quot;&gt;Tess4J&lt;/a&gt; - A JNA wrapper for Tesseract OCR API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/coobird/thumbnailator&quot;&gt;Thumbnailator&lt;/a&gt; - High-quality thumbnail generation library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/haraldk/TwelveMonkeys&quot;&gt;TwelveMonkeys&lt;/a&gt; - Collection of plugins that extend the number of supported image file formats.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zxing/zxing&quot;&gt;ZXing&lt;/a&gt; - Multi-format 1D/2D barcode image processing library.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;json&quot;&gt;JSON&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries for serializing and deserializing JSON to and from Java objects.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://owlike.github.io/genson/&quot;&gt;Genson&lt;/a&gt; - Powerful and easy-to-use Java-to-JSON conversion library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/gson&quot;&gt;Gson&lt;/a&gt; - Serializes objects to JSON and vice versa. Good performance with on-the-fly usage.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/brettwooldridge/HikariJSON&quot;&gt;HikariJSON&lt;/a&gt; - High-performance JSON parser, 2x faster than Jackson.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando/jackson-datatype-money&quot;&gt;Jackson-datatype-money&lt;/a&gt; - Open-source Jackson module to support JSON serialization and deserialization of JavaMoney data types.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/FasterXML/jackson&quot;&gt;Jackson&lt;/a&gt; - Similar to GSON, but offers performance gains if you need to instantiate the library more often.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jdereg/json-io&quot;&gt;JSON-io&lt;/a&gt; - Convert Java to JSON. Convert JSON to Java. Pretty print JSON. Java JSON serializer.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jsoniter.com&quot;&gt;jsoniter&lt;/a&gt; - Fast and flexible library with iterator and lazy parsing API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bluelinelabs/LoganSquare&quot;&gt;LoganSquare&lt;/a&gt; - JSON parsing and serializing library based on Jackson’s streaming API. Outperforms GSON &amp;amp; Jackson’s library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/square/moshi&quot;&gt;Moshi&lt;/a&gt; - Modern JSON library, less opinionated and uses built-in types like List and Map.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/eclipse/yasson&quot;&gt;Yasson&lt;/a&gt; - Binding layer between classes and JSON documents similar to JAXB.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;json-processing&quot;&gt;JSON Processing&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries for processing data in JSON format.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/alibaba/fastjson&quot;&gt;fastjson&lt;/a&gt; - Very fast processor with no additional dependencies and full data binding.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bazaarvoice/jolt&quot;&gt;Jolt&lt;/a&gt; - JSON to JSON transformation tool.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jayway/JsonPath&quot;&gt;JsonPath&lt;/a&gt; - Extract data from JSON using XPATH-like syntax.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jsurfer/JsonSurfer&quot;&gt;JsonSurfer&lt;/a&gt; - Streaming JsonPath processor dedicated to processing big and complicated JSON data.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;jvm-and-jdk&quot;&gt;JVM and JDK&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Current implementations of the JVM/JDK.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ReadyTalk/avian&quot;&gt;Avian&lt;/a&gt; - JVM with both JIT and AOT modes. Includes an iOS port.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/eclipse/openj9&quot;&gt;OpenJ9&lt;/a&gt; - High performance, enterprise calibre, flexibly licensed, openly governed cross platform Java Virtual Machine extending and augmenting the runtime technology components from the Eclipse OMR and OpenJDK project.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://openjdk.java.net/&quot;&gt;OpenJDK&lt;/a&gt; - Open-source implementation for Linux.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/codenameone/CodenameOne/tree/master/vm&quot;&gt;ParparVM&lt;/a&gt; - VM with non-blocking, concurrent GC for iOS.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zulu.org/zulu-9-pre-release-downloads/&quot;&gt;Zulu OpenJDK 9&lt;/a&gt; - Early-access OpenJDK 9 builds for Windows, Linux, and Mac OS X.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.azul.com/downloads/zulu/&quot;&gt;Zulu OpenJDK&lt;/a&gt; - OpenJDK builds for Windows, Linux, and Mac OS X through Java 8.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;logging&quot;&gt;Logging&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that log the behavior of an application.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://logging.apache.org/log4j/&quot;&gt;Apache Log4j 2&lt;/a&gt; - Complete rewrite with a powerful plugin and configuration architecture.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.graylog.org/&quot;&gt;Graylog&lt;/a&gt; - Open-source aggregator suited for extended role and permission management.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.elastic.co/products/kibana&quot;&gt;Kibana&lt;/a&gt; - Analyzes and visualizes log files. Some features require payment.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://logback.qos.ch/&quot;&gt;Logback&lt;/a&gt; - Robust logging library with interesting configuration options via Groovy.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando/logbook&quot;&gt;Logbook&lt;/a&gt; - Extensible, open-source library for HTTP request and response logging.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.elastic.co/products/logstash&quot;&gt;Logstash&lt;/a&gt; - Tool for managing log files.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.slf4j.org/&quot;&gt;SLF4J&lt;/a&gt; - Abstraction layer/simple logging facade.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.tinylog.org/&quot;&gt;tinylog&lt;/a&gt; - Lightweight logging framework with static logger class.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando/tracer&quot;&gt;Tracer&lt;/a&gt; - Call tracing and log correlation in distributed systems.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;machine-learning&quot;&gt;Machine Learning&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that provide specific statistical algorithms for learning from data.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://flink.apache.org/&quot;&gt;Apache Flink&lt;/a&gt; - Fast, reliable, large-scale data processing engine.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mahout.apache.org/&quot;&gt;Apache Mahout&lt;/a&gt; - Scalable algorithms focused on collaborative filtering, clustering and classification.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://spark.apache.org/&quot;&gt;Apache Spark&lt;/a&gt; - Data analytics cluster-computing framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.datumbox.com&quot;&gt;DatumBox&lt;/a&gt; - Provides several algorithms and pre-trained models for natural language processing.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://deepdive.stanford.edu&quot;&gt;DeepDive&lt;/a&gt; - Creates structured information from unstructured data and integrates it into an existing database.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://deeplearning4j.org/&quot;&gt;Deeplearning4j&lt;/a&gt; - Distributed and multi-threaded deep learning library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.h2o.ai/&quot;&gt;H2O&lt;/a&gt; - Analytics engine for statistics over big data.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/EdwardRaff/JSAT&quot;&gt;JSAT&lt;/a&gt; - Algorithms for pre-processing, classification, regression, and clustering with support for multi-threaded execution.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/OryxProject/oryx&quot;&gt;Oryx 2&lt;/a&gt; - Framework for building real-time, large-scale machine learning applications. Includes end-to-end applications for collaborative filtering, classification, regression, and clustering.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://haifengl.github.io/smile/&quot;&gt;Smile&lt;/a&gt; - The Statistical Machine Intelligence and Learning Engine provides a set of machine learning algorithms and a visualization library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.cs.waikato.ac.nz/ml/weka/&quot;&gt;Weka&lt;/a&gt; - Collection of algorithms for data mining tasks ranging from pre-processing to visualization.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;messaging&quot;&gt;Messaging&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that help send messages between clients to ensure protocol independency.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/real-logic/Aeron&quot;&gt;Aeron&lt;/a&gt; - Efficient, reliable, unicast and multicast message transport.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://activemq.apache.org/&quot;&gt;Apache ActiveMQ&lt;/a&gt; - Message broker that implements JMS and converts synchronous to asynchronous communication.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://camel.apache.org/&quot;&gt;Apache Camel&lt;/a&gt; - Glues together different transport APIs via Enterprise Integration Patterns.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://kafka.apache.org/&quot;&gt;Apache Kafka&lt;/a&gt; - High-throughput distributed messaging system.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://hermes.allegro.tech&quot;&gt;Hermes&lt;/a&gt; - Fast and reliable message broker built on top of Kafka.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zeromq/jeromq&quot;&gt;JeroMQ&lt;/a&gt; - Implementation of ZeroMQ.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando/nakadi&quot;&gt;Nakadi&lt;/a&gt; - Provides a RESTful API on top of Kafka.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/alibaba/RocketMQ&quot;&gt;RocketMQ&lt;/a&gt; - A fast, reliable, and scalable distributed messaging platform.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/igniterealtime/Smack/&quot;&gt;Smack&lt;/a&gt; - Cross-platform XMPP client library.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;miscellaneous&quot;&gt;Miscellaneous&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Everything else.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.codenameone.com/&quot;&gt;Codename One&lt;/a&gt; - Cross-platform solution for writing native mobile apps.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/npgall/cqengine&quot;&gt;CQEngine&lt;/a&gt; - Ultra-fast, SQL-like queries on Java collections.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/iluwatar/java-design-patterns&quot;&gt;Design Patterns&lt;/a&gt; - Implementation and explanation of the most common design patterns.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jhalterman/failsafe&quot;&gt;Failsafe&lt;/a&gt; - Simple failure handling with retries and circuit breakers.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ff4j.org/&quot;&gt;FF4J&lt;/a&gt; - Feature Flags for Java.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/j2objc&quot;&gt;J2ObjC&lt;/a&gt; - Java-to-Objective-C translator for porting Android libraries to iOS.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://javax.ai1.lol/&quot;&gt;JavaX&lt;/a&gt; - Reinventing and extending Java with a focus on simplicity.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jbake.org&quot;&gt;JBake&lt;/a&gt; - Static website generator.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ramswaroop/jbot&quot;&gt;JBot&lt;/a&gt; - Framework for building chatbots.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/jimfs&quot;&gt;Jimfs&lt;/a&gt; - In-memory file system.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.joda.org/joda-money/&quot;&gt;Joda-Money&lt;/a&gt; - Basic currency and money classes and algorithms not provided by the JDK.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jpad.io/&quot;&gt;JPad&lt;/a&gt; - Snippet runner.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mabe02/lanterna&quot;&gt;Lanterna&lt;/a&gt; - Easy console text-GUI library, similar to curses.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://lightadmin.org/&quot;&gt;LightAdmin&lt;/a&gt; - Pluggable CRUD UI library for rapid application development.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/takari/maven-wrapper&quot;&gt;Maven Wrapper&lt;/a&gt; - Analogue of Gradle Wrapper for Maven, allows build projects without installing maven.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/membrane/service-proxy&quot;&gt;Membrane Service Proxy&lt;/a&gt; - An open-source, reverse-proxy framework written in Java.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://software.intel.com/en-us/multi-os-engine&quot;&gt;Multi-OS Engine&lt;/a&gt; - An open-source, cross-platform engine to develop native mobile (iOS, Android, etc.) apps.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/winterbe/java8-tutorial&quot;&gt;Modern Java - A Guide to Java 8&lt;/a&gt; - Popular Java 8 guide.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/andrewgaul/modernizer-maven-plugin&quot;&gt;Modernizer&lt;/a&gt; - Detect uses of legacy Java APIs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://openrefine.org/&quot;&gt;OpenRefine&lt;/a&gt; - Tool for working with messy data: cleaning, transforming, extending it with web services and linking it to databases.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/takari/polyglot-maven/&quot;&gt;Polyglot for Maven&lt;/a&gt; - Extensions for Maven 3.3.1+ that allows writing the POM model in dialects other than XML.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/smooks/smooks&quot;&gt;Smooks&lt;/a&gt; - Extensible framework for building applications that process data which means bindings, transformations, message processing and enrichment.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.togglz.org/&quot;&gt;Togglz&lt;/a&gt; - Implementation of the Feature Toggles pattern.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jhalterman/typetools&quot;&gt;TypeTools&lt;/a&gt; - Tools for resolving generic types.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/SvenEwald/xmlbeam&quot;&gt;XMLBeam&lt;/a&gt; - Processes XML by using annotations or XPath within code.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;microservice&quot;&gt;Microservice&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools for managing microservices: i.e., creation, coordination or discovery.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://spotify.github.io/apollo/&quot;&gt;Apollo&lt;/a&gt; - Libraries for writing composable microservices.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Ecwid/consul-api&quot;&gt;consul-api&lt;/a&gt; - Client for the &lt;a href=&quot;https://www.consul.io/&quot;&gt;Consul&lt;/a&gt; API: a distributed, highly available and datacenter-aware registry/discovery service.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Netflix/eureka&quot;&gt;Eureka&lt;/a&gt; - REST-based service registry for resilient load balancing and failover.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.lightbend.com/lagom&quot;&gt;Lagom&lt;/a&gt; - Framework for creating microservice-based systems.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;monitoring&quot;&gt;Monitoring&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that monitor applications in production.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.appdynamics.com/&quot;&gt;AppDynamics &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Performance monitor.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/stevensouza/automon&quot;&gt;Automon&lt;/a&gt; - Combines the power of AOP with monitoring and/or logging tools.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/zalando-incubator/failsafe-actuator&quot;&gt;Failsafe Actuator&lt;/a&gt; - Out of the box monitoring of Failsafe Circuit Breaker in Spring-Boot environment.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.bugsnag.com/&quot;&gt;BugSnag &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Exception and error monitoring with a integration of several third party tools for a better workflow and a free hobbyist tier.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://glowroot.org/&quot;&gt;Glowroot&lt;/a&gt; - Open-source Java APM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://instrumentalapp.com&quot;&gt;Instrumental &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Real-time Java application performance monitoring. A commercial service with free development accounts.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/javamelody/javamelody&quot;&gt;JavaMelody&lt;/a&gt; - Performance monitoring and profiling.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jmxtrans/jmxtrans/&quot;&gt;jmxtrans&lt;/a&gt; - Connect to multiple JVMs and query them for their attributes via JMX. Its query language is based on JSON, which allows non-Java programmers to access the JVM attributes. Supports different output writes, including Graphite, Ganglia, and StatsD.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jolokia.org/&quot;&gt;Jolokia&lt;/a&gt; - JMX over REST.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.kamon.io/&quot;&gt;Kamon&lt;/a&gt; - Tool for monitoring applications running on the JVM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://metrics.dropwizard.io/&quot;&gt;Metrics&lt;/a&gt; - Expose metrics via JMX or HTTP and send them to a database.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://newrelic.com/&quot;&gt;New Relic &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Performance monitor.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/lorenzoongithub/nudge4j&quot;&gt;nudge4j&lt;/a&gt; - Remote developer console from the browser for Java 8 via bytecode injection.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.overops.com/&quot;&gt;OverOps &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - In-production error monitoring and debugging.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/naver/pinpoint&quot;&gt;Pinpoint&lt;/a&gt; - Open-source APM tool.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://prometheus.io/&quot;&gt;Prometheus&lt;/a&gt; - Provides a multi-dimensional data model, DSL, autonomous server nodes and much more.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://sematext.com/spm/&quot;&gt;SPM &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Performance monitor with distributing transaction tracing for JVM apps.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/stagemonitor/stagemonitor&quot;&gt;Stagemonitor&lt;/a&gt; - Open-source performance monitoring and transaction tracing for JVM apps.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/palantir/Sysmon&quot;&gt;Sysmon&lt;/a&gt; - Lightweight platform monitoring tool for Java VMs.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;native&quot;&gt;Native&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;For working with platform-specific native libraries.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/bytedeco/javacpp&quot;&gt;JavaCPP&lt;/a&gt; - Provides efficient and easy access to native C++.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/java-native-access/jna&quot;&gt;JNA&lt;/a&gt; - Work with native libraries without writing JNI. Also provides interfaces to common system libraries.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jnr/jnr-ffi&quot;&gt;JNR&lt;/a&gt; - Work with native libraries without writing JNI. Also provides interfaces to common system libraries. Same goals as JNA, but faster, and serves as the basis for the upcoming &lt;a href=&quot;http://openjdk.java.net/projects/panama/&quot;&gt;Project Panama&lt;/a&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;natural-language-processing&quot;&gt;Natural Language Processing&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that specialize in processing text.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/CogComp/cogcomp-nlp&quot;&gt;CogCompNLP&lt;/a&gt; - Provides common annotators for plain text input.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://nlp.stanford.edu/software/corenlp.shtml&quot;&gt;CoreNLP&lt;/a&gt; - Provides a set of fundamental tools for tasks like tagging, named entity recognition, and sentiment analysis.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dkpro.github.io/&quot;&gt;DKPro&lt;/a&gt; - Collection of reusable NLP tools for linguistic pre-processing, machine learning, lexical resources, etc.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://alias-i.com/lingpipe/&quot;&gt;LingPipe&lt;/a&gt; - Toolkit for tasks ranging from POS tagging to sentiment analysis.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;networking&quot;&gt;Networking&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries for building network servers.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/puniverse/comsat&quot;&gt;Comsat&lt;/a&gt; - Integrates standard Java web-related APIs with Quasar fibers and actors.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/twitter/finagle&quot;&gt;Finagle&lt;/a&gt; - Extensible RPC system for constructing high-concurrency servers. It implements uniform client and server APIs for several protocols, and is protocol-agnostic to simplify implementation of new protocols.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://javaee.github.io/grizzly&quot;&gt;Grizzly&lt;/a&gt; - NIO framework. Used as a network layer in Glassfish.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/grpc/grpc-java&quot;&gt;gRPC&lt;/a&gt; - RPC framework based on protobuf and HTTP/2.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/EsotericSoftware/kryonet&quot;&gt;KryoNet&lt;/a&gt; - Provides a clean and simple API for efficient TCP and UDP client/server network communication using NIO and Kryo.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://mina.apache.org/&quot;&gt;MINA&lt;/a&gt; - Abstract, event-driven async I/O API for network operations over TCP/IP and UDP/IP via Java NIO.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://netty.io/&quot;&gt;Netty&lt;/a&gt; - Framework for building high-performance network applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/facebook/nifty&quot;&gt;Nifty&lt;/a&gt; - Implementation of Thrift clients and servers on Netty.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://undertow.io/&quot;&gt;Undertow&lt;/a&gt; - Web server providing both blocking and non-blocking APIs based on NIO. Used as a network layer in WildFly.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/slub/urnlib&quot;&gt;urnlib&lt;/a&gt; - Represent, parse and encode URNs, as in RFC 2141.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;orm&quot;&gt;ORM&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;APIs that handle the persistence of objects.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cayenne.apache.org/&quot;&gt;Apache Cayenne&lt;/a&gt; - Provides a clean, static API for data access. Also includes a GUI Modeler for working with database mappings, and DB reverse engineering and generation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://ebean-orm.github.io/&quot;&gt;Ebean&lt;/a&gt; - Provides simple and fast data access.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.eclipse.org/eclipselink/&quot;&gt;EclipseLink&lt;/a&gt; - Supports a number of persistence standards: JPA, JAXB, JCA and SDO.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://hibernate.org/orm/&quot;&gt;Hibernate&lt;/a&gt; - Robust and widely used, with an active community.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.mybatis.org/mybatis-3/&quot;&gt;MyBatis&lt;/a&gt; - Couples objects with stored procedures or SQL statements.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/arnaudroger/SimpleFlatMapper&quot;&gt;SimpleFlatMapper&lt;/a&gt; - Simple database and CSV mapper.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;paas&quot;&gt;PaaS&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Java platform as a service.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/elasticbeanstalk/&quot;&gt;AWS Elastic Beanstalk &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - AWS-based, with support for Tomcat and Jetty.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/lambda/&quot;&gt;AWS Lambda &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Serverless computation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cloud.google.com/&quot;&gt;Google App Engine &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - PaaS on Google’s infrastructure.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.heroku.com/&quot;&gt;Heroku &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Abstract computing environments.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jelastic.com/&quot;&gt;Jelastic &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Supports Tomcat, Jetty, GlassFish, JBoss, TomEE and WildFly.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.openshift.com/&quot;&gt;OpenShift Enterprise &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - On-premise solution.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;pdf&quot;&gt;PDF&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools to help with PDF file creation.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://xmlgraphics.apache.org/fop/&quot;&gt;Apache FOP&lt;/a&gt; - Creates PDFs from XSL-FO.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pdfbox.apache.org/&quot;&gt;Apache PDFBox&lt;/a&gt; - Toolbox for creating and manipulating PDFs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://dynamicjasper.com/&quot;&gt;Dynamic Jasper&lt;/a&gt; - Abstraction layer to JasperReports.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://dynamicreports.org/&quot;&gt;DynamicReports&lt;/a&gt; - Simplifies JasperReports.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/flyingsaucerproject/flyingsaucer&quot;&gt;flyingsaucer&lt;/a&gt; - XML/XHTML and CSS 2.1 renderer.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://itextpdf.com/&quot;&gt;iText &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Creates PDF files programmatically.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://community.jaspersoft.com/project/jasperreports-library&quot;&gt;JasperReports&lt;/a&gt; - Complex reporting engine.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;performance-analysis&quot;&gt;Performance analysis&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools for performance analysis, profiling and benchmarking.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://fastthread.io&quot;&gt;fastThread &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Analyze and visualize thread dumps with a free cloud-based upload interface.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gceasy.io&quot;&gt;GCeasy &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Tool to analyze and visualize GC logs. It provides a free cloud-based upload interface.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/RichardWarburton/honest-profiler&quot;&gt;honest-profiler&lt;/a&gt; - A low-overhead, bias-free sampling profiler.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/giltene/jHiccup&quot;&gt;jHiccup&lt;/a&gt; - Logs and records platform JVM stalls.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/AdoptOpenJDK/jitwatch&quot;&gt;JITWatch&lt;/a&gt; - Analyze the JIT compiler optimisations made by the HotSpot JVM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://openjdk.java.net/projects/code-tools/jmh/&quot;&gt;JMH&lt;/a&gt; - a Java harness for building, running, and analysing nano/micro/milli/macro benchmarks written in Java and other languages targeting the JVM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.ej-technologies.com/products/jprofiler/overview.html&quot;&gt;JProfiler &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Database profiling for JDBC, JPA and NoSQL, with JEE support.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/LatencyUtils/LatencyUtils&quot;&gt;LatencyUtils&lt;/a&gt; - Utilities for latency measurement and reporting.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zeroturnaround.com/software/xrebel/&quot;&gt;XRebel &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Real-time profiling for web applications, with an in-browser widget.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.yourkit.com/features/&quot;&gt;YourKit Java Profiler &lt;img src=&quot;https://cdn.rawgit.com/akullpp/23246ca832bda82bb505230bf3538e2a/raw/d9bcdb769bf025292f9c6bc1290f01f1fcd1f864/commercial.svg&quot; alt=&quot;c&quot; /&gt;&lt;/a&gt; - Profiler for any application running on the JVM.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;platform&quot;&gt;Platform&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks that are suites of multiple libraries encompassing several categories.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cuba-platform.com&quot;&gt;CUBA Platform&lt;/a&gt; - High-level framework for developing enterprise applications with a rich web interface, based on Spring, EclipseLink and Vaadin.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/networknt/light-java&quot;&gt;Light-Java&lt;/a&gt; - A fast, lightweight and productive microservices framework with built-in &lt;a href=&quot;https://github.com/networknt/light-oauth2&quot;&gt;security&lt;/a&gt;.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/OrienteerBAP/Orienteer&quot;&gt;Orienteer&lt;/a&gt; - Open-source business application platform for rapid configuration/development of CRM, ERP, LMS and other applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://spring.io/projects&quot;&gt;Spring&lt;/a&gt; - Provides many packages for dependency injection, aspect-oriented programming, security, etc.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;reactive-libraries&quot;&gt;Reactive libraries&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries for developing reactive applications.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://akka.io&quot;&gt;Akka&lt;/a&gt; - Toolkit and runtime for building concurrent, distributed, fault-tolerant and event-driven applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/reactive-streams/reactive-streams-jvm/&quot;&gt;Reactive Streams&lt;/a&gt; - Provides a standard for asynchronous stream processing with non-blocking backpressure.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://projectreactor.io/&quot;&gt;Reactor&lt;/a&gt; - Library for building reactive fast-data applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://vertx.io/&quot;&gt;vert.x&lt;/a&gt; - Polyglot event-driven application framework.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;rest-frameworks&quot;&gt;REST Frameworks&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks specifically for creating RESTful services.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dropwizard.github.io/dropwizard/&quot;&gt;Dropwizard&lt;/a&gt; - Opinionated framework for setting up modern web applications with Jetty, Jackson, Jersey and Metrics.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jersey.github.io/&quot;&gt;Jersey&lt;/a&gt; - JAX-RS reference implementation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/aol/micro-server&quot;&gt;Microserver&lt;/a&gt; — A convenient, extensible microservices plugin system for Spring &amp;amp; Spring Boot. With more than 30 plugins and growing, it supports both micro-monolith and pure microservices styles.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.rapidoid.org/&quot;&gt;Rapidoid&lt;/a&gt; - A simple, secure and extremely fast framework consisting of an embedded HTTP server, GUI components and dependency injection.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/linkedin/rest.li&quot;&gt;rest.li&lt;/a&gt; - Framework for building robust, scalable RESTful architectures using typesafe bindings and asynchronous, non-blocking IO with an end-to-end developer workflow that promotes clean practices, uniform interface design and consistent data modeling.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://resteasy.jboss.org/&quot;&gt;RESTEasy&lt;/a&gt; - Fully certified and portable implementation of the JAX-RS specification.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/RestExpress/RestExpress&quot;&gt;RestExpress&lt;/a&gt; - Thin wrapper on the JBoss Netty HTTP stack that provides scaling and performance.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/restlet/restlet-framework-java/&quot;&gt;Restlet Framework&lt;/a&gt; - Pioneering framework with powerful routing and filtering capabilities, and a unified client and server API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://sparkjava.com/&quot;&gt;Spark&lt;/a&gt; - Sinatra inspired framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.crnk.io/&quot;&gt;Crnk&lt;/a&gt; - Implementation of the JSON API specification to build resource-oriented REST endpoints with sorting, filtering, paging, linking, object graphs, type-safety, bulk updates, integrations and more.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;science&quot;&gt;Science&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries for scientific computing, analysis and visualization.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jwork.org/dmelt/&quot;&gt;DataMelt&lt;/a&gt; - Environment for scientific computation, data analysis and data visualization.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Erdos-Graph-Framework/Erdos&quot;&gt;Erdos&lt;/a&gt; - Modular, light and easy graph framework for theoretic algorithms.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://graphstream-project.org/&quot;&gt;GraphStream&lt;/a&gt; - Library for modeling and analyzing dynamic graphs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jgrapht/jgrapht&quot;&gt;JGraphT&lt;/a&gt; - Graph library that provides mathematical graph-theory objects and algorithms.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jgraph/jgraphx&quot;&gt;JGraphX&lt;/a&gt; - Library for visualizing (mainly Swing) and interacting with node-edge graphs.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/MinesJTK/jtk&quot;&gt;Mines Java Toolkit&lt;/a&gt; - Library for geophysical scientific computation, visualization and digital signal analysis.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.zavtech.com/morpheus/docs/&quot;&gt;Morpheus&lt;/a&gt; - Provides a versatile two-dimensional memory efficient tabular data structure called a DataFrame to enable efficient in-memory analytics for scientific computing on the JVM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/lwhite1/tablesaw&quot;&gt;Tablesaw&lt;/a&gt; - Includes a data-frame, an embedded column store, and hundreds of methods to transform, summarize, or filter data.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;search&quot;&gt;Search&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Engines that index documents for search and analysis.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lucene.apache.org/&quot;&gt;Apache Lucene&lt;/a&gt; - High-performance, full-featured, cross-platform, text search engine library.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://lucene.apache.org/solr/&quot;&gt;Apache Solr&lt;/a&gt; - Enterprise search engine optimized for high-volume traffic.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.elastic.co/&quot;&gt;Elasticsearch&lt;/a&gt; - Distributed, multitenant-capable, full-text search engine with a RESTful web interface and schema-free JSON documents.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;security&quot;&gt;Security&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that handle security, authentication, authorization or session management.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://shiro.apache.org/&quot;&gt;Apache Shiro&lt;/a&gt; - Performs authentication, authorization, cryptography and session management.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.bouncycastle.org/java.html&quot;&gt;Bouncy Castle&lt;/a&gt; - All-purpose cryptographic library and JCA provider offering a wide range of functions, from basic helpers to PGP/SMIME operations.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cryptomator.org/&quot;&gt;Cryptomator&lt;/a&gt; - Multiplatform, transparent, client-side encryption of files in the cloud.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/hdiv/hdiv&quot;&gt;Hdiv&lt;/a&gt; - Runtime application that repels application security risks included in the OWASP Top 10, including SQL injection, cross-site scripting, cross-site request forgery, data tampering, and brute force attacks.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jwtk/jjwt&quot;&gt;jjwt&lt;/a&gt; - JSON web token for Java and Android.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://keycloak.jboss.org/&quot;&gt;Keycloak&lt;/a&gt; - Integrated SSO and IDM for browser apps and RESTful web services.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/keyczar&quot;&gt;Keyczar&lt;/a&gt; - Easy-to-use, safe encryption framework with key versioning.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/square/keywhiz&quot;&gt;Keywhiz&lt;/a&gt; - System for distributing and managing secrets.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/GoSimpleLLC/nbvcxz&quot;&gt;Nbvcxz&lt;/a&gt; - Advanced password strength estimation.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://oaccframework.org/&quot;&gt;OACC&lt;/a&gt; - Provides permission-based authorization services.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/pac4j/pac4j&quot;&gt;pac4j&lt;/a&gt; - Security engine.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://picketlink.org/&quot;&gt;PicketLink&lt;/a&gt; - Umbrella project for security and identity management.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.vaultproject.io/&quot;&gt;Vault&lt;/a&gt; - Secures, stores, and tightly controls access to tokens, passwords, certificates, API keys, and other secrets. It handles leasing, key revocation, key rolling, and auditing. Through a unified API, users can access an encrypted Key/Value store and network encryption-as-a-service, or generate AWS IAM/STS credentials, SQL/NoSQL databases, X.509 certificates, SSH credentials, and more.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;serialization&quot;&gt;Serialization&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that handle serialization with high efficiency.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/flatbuffers&quot;&gt;FlatBuffers&lt;/a&gt; - Memory-efficient serialization library that can access serialized data without unpacking and parsing it.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/RuedigerMoeller/fast-serialization&quot;&gt;FST&lt;/a&gt; - JDK-compatible, high-performance object graph serialization.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/EsotericSoftware/kryo&quot;&gt;Kryo&lt;/a&gt; - Fast and efficient object graph serialization framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/msgpack/msgpack-java&quot;&gt;MessagePack&lt;/a&gt; - Efficient binary serialization format.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/marcospassos/java-php-serializer&quot;&gt;PHP Serializer&lt;/a&gt; - Serializing objects in the PHP serialization format.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;server&quot;&gt;Server&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Servers specifically used to deploy applications.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://tomcat.apache.org/&quot;&gt;Apache Tomcat&lt;/a&gt; - Robust, all-round server for Servlet and JSP.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://tomee.apache.org/&quot;&gt;Apache TomEE&lt;/a&gt; - Tomcat plus Java EE.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.eclipse.org/jetty/&quot;&gt;Jetty&lt;/a&gt; - Provides a Web server and javax.servlet container, plus support for HTTP/2, WebSocket, OSGi, JMX, JNDI, JAAS and many other integrations.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/NanoHttpd/nanohttpd&quot;&gt;nanohttpd&lt;/a&gt; - Tiny, easily embeddable HTTP server.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developer.ibm.com/wasdev/&quot;&gt;WebSphere Liberty&lt;/a&gt; - Lightweight, modular server developed by IBM.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.wildfly.org/&quot;&gt;WildFly&lt;/a&gt; - Formerly known as JBoss and developed by Red Hat with extensive Java EE support.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;template-engine&quot;&gt;Template Engine&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that substitute expressions in a template.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jknack.github.io/handlebars.java/&quot;&gt;Handlebars.java&lt;/a&gt; - Logicless and semantic Mustache templates.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jtwig.org/&quot;&gt;Jtwig&lt;/a&gt; - Modular, configurable and fully tested template engine.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/neuland/jade4j&quot;&gt;Jade4J&lt;/a&gt; - Implementation of jade.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.mitchellbosecke.com/pebble/home&quot;&gt;Pebble&lt;/a&gt; - Inspired by Twig and separates itself with it’s inheritance feature and it’s easy-to-read syntax. It ships with built-in autoescaping for security and it includes integrated support for internationalization.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.thymeleaf.org/&quot;&gt;Thymeleaf&lt;/a&gt; - Aims to be a substitute for JSP and works for XML files.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;testing&quot;&gt;Testing&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that test from model to the view.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;asynchronous&quot;&gt;Asynchronous&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Tools that simplify testing asynchronous services.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jayway/awaitility&quot;&gt;Awaitility&lt;/a&gt; - DSL for synchronizing asynchronous operations.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jhalterman/concurrentunit&quot;&gt;ConcurrentUnit&lt;/a&gt; - Toolkit for testing multi-threaded and asynchronous applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.icegreen.com/greenmail/&quot;&gt;GreenMail&lt;/a&gt; - In-memory email server for integration testing. Supports SMTP, POP3 and IMAP including SSL.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/SpectoLabs/hoverfly-java&quot;&gt;Hoverfly Java&lt;/a&gt; - Native bindings for Hoverfly a proxy which allows you to simulate HTTP services.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jayway/rest-assured&quot;&gt;REST Assured&lt;/a&gt; - DSL for easy testing of REST/HTTP services.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;bdd&quot;&gt;BDD&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Testing for the software development process that emerged from TDD and was heavily influenced by DDD and OOAD.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/cucumber/cucumber-jvm&quot;&gt;Cucumber&lt;/a&gt; - Provides a way to describe features in a plain language which customers can understand.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ctco/cukes-rest&quot;&gt;Cukes-REST&lt;/a&gt; - A collection of Gherkin steps for REST-service testing using Cucumber.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/j8spec/j8spec/&quot;&gt;J8Spec&lt;/a&gt; - Follows a Jasmine-like syntax.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jbehave.org/&quot;&gt;JBehave&lt;/a&gt; - Extensively configurable framework that describes stories.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jgiven.org&quot;&gt;JGiven&lt;/a&gt; - Provides a fluent API which allows for simpler composition.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/RichardWarburton/lambda-behave&quot;&gt;Lamdba Behave&lt;/a&gt; - Aims to provide a fluent API to write tests in long and descriptive sentences that read like plain English.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;fixtures&quot;&gt;Fixtures&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Everything related to the creation and handling of random data.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/keepcosmos/beanmother&quot;&gt;Beanmother&lt;/a&gt; - Sets up beans from YAML fixtures.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/six2six/fixture-factory&quot;&gt;Fixture Factory&lt;/a&gt; - Generates fake objects from a template.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Codearte/jfairy&quot;&gt;JFairy&lt;/a&gt; - Fake data generator.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/randomizedtesting/randomizedtesting&quot;&gt;Randomized Testing&lt;/a&gt; - JUnit test runner and plugins for running JUnit tests with pseudo-randomness.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;frameworks&quot;&gt;Frameworks&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Provide environments to run tests for a specific use case.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/TNG/ArchUnit&quot;&gt;ArchUnit&lt;/a&gt; - Test library for specifying and asserting architecture rules.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jmeter.apache.org/&quot;&gt;Apache JMeter&lt;/a&gt; - Functional testing and performance measurements.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://arquillian.org/&quot;&gt;Arquillian&lt;/a&gt; - Integration and functional testing platform for Java EE containers.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://citrusframework.org/&quot;&gt;Citrus&lt;/a&gt; - Integration testing framework that focuses on both client- and server-side messaging.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://gatling.io/&quot;&gt;Gatling&lt;/a&gt; - Load testing tool designed for ease of use, maintainability and high performance.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://junit.org/&quot;&gt;JUnit&lt;/a&gt; - Common testing framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://pitest.org&quot;&gt;PIT&lt;/a&gt; - Fast mutation-testing framework for evaluating fault-detection abilities of existing JUnit or TestNG test suites.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/DiUS/pact-jvm/&quot;&gt;Pact JVM&lt;/a&gt; - Consumer-driven contract testing.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;matchers&quot;&gt;Matchers&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that provide custom matchers.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://joel-costigliola.github.io/assertj/&quot;&gt;AssertJ&lt;/a&gt; - Fluent assertions that improve readability.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jsonassert.skyscreamer.org/&quot;&gt;JSONAssert&lt;/a&gt; - Simplifies testing JSON strings.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/truth&quot;&gt;Truth&lt;/a&gt; - Google’s assertion and proposition framework.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;miscellaneous-1&quot;&gt;Miscellaneous&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Other stuff related to testing.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/MutabilityDetector/MutabilityDetector&quot;&gt;Mutability Detector&lt;/a&gt; - Reports whether instances of a given class are immutable.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/nidi3/raml-tester&quot;&gt;raml-tester&lt;/a&gt; - Tests if a request/response matches a given RAML definition.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/testcontainers/testcontainers-java&quot;&gt;TestContainers&lt;/a&gt; - Provides throwaway instances of common databases, Selenium web browsers, or anything else that can run in a Docker container.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.pojo.pl/&quot;&gt;pojo-tester&lt;/a&gt; - Automatically performs tests on basic POJO methods.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;mocking&quot;&gt;Mocking&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Tools which mock collaborators to help testing single, isolated units.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jmockit.org/&quot;&gt;JMockit&lt;/a&gt; - Integration testing, API mocking and faking, and code coverage.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mockito/mockito&quot;&gt;Mockito&lt;/a&gt; - Mocking framework that lets you write tests with a clean and simple API.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.mock-server.com/&quot;&gt;MockServer&lt;/a&gt; - Allows mocking of systems integrated with HTTPS.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/dreamhead/moco&quot;&gt;Moco&lt;/a&gt; - Concise web services for stubs and mocks.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/jayway/powermock&quot;&gt;PowerMock&lt;/a&gt; - Mocks static methods, constructors, final classes and methods, private methods, and removal of static initializers.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://wiremock.org/&quot;&gt;WireMock&lt;/a&gt; - Stubs and mocks web services.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;parameterization&quot;&gt;Parameterization&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;Simplifies the writing of parameterized tests.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/square/burst&quot;&gt;Burst&lt;/a&gt; - A unit testing library for varying test data.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/TNG/junit-dataprovider&quot;&gt;junit-dataprovider&lt;/a&gt; - A TestNG-like data provider/runner for JUnit.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://pragmatists.github.io/JUnitParams/&quot;&gt;JUnitParams&lt;/a&gt; - Creates readable and maintainable parametrised tests.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;utility&quot;&gt;Utility&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries which provide general utility functions.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://commons.apache.org/&quot;&gt;Apache Commons&lt;/a&gt; - Provides configuration, validation, collections, file uploading, XML processing and other general-purpose functions.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.cactoos.org&quot;&gt;cactoos&lt;/a&gt; - Collection of object-oriented primitives.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.crashub.org&quot;&gt;CRaSH&lt;/a&gt; - Provides a shell into a JVM that’s running CRaSH. Used by Spring Boot and others.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/PatMartin/Dex&quot;&gt;Dex&lt;/a&gt; - Java/JavaFX tool capable of powerful ETL and data visualization.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.embulk.org/&quot;&gt;Embulk&lt;/a&gt; - Bulk data loader that helps data transfer between various databases, storages, file formats, and cloud services.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/gephi/gephi/&quot;&gt;Gephi&lt;/a&gt; - Cross-platform for visualizing and manipulating large graph networks.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/google/guava&quot;&gt;Guava&lt;/a&gt; - Collections, caching, primitives support, concurrency libraries, common annotations, string processing, I/O, and more.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jade.tilab.com/&quot;&gt;JADE&lt;/a&gt; - Framework and environment for building and debugging multi-agent systems.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/VerbalExpressions/JavaVerbalExpressions&quot;&gt;JavaVerbalExpressions&lt;/a&gt; - Library that helps with constructing difficult regular expressions.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://eclipse.org/jgit/&quot;&gt;JGit&lt;/a&gt; - A lightweight, pure Java library implementing the Git version control system.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/minio/minio-java&quot;&gt;minio-java&lt;/a&gt; - Provides simple APIs to access any Amazon S3-compatible object storage server.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://protege.stanford.edu/&quot;&gt;Protégé&lt;/a&gt; - Provides an ontology editor and a framework to build knowledge-based systems.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/javadev/underscore-java&quot;&gt;Underscore-java&lt;/a&gt; - Port of Underscore.js functions.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;version-managers&quot;&gt;Version Managers&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Utilities that help create the development shell environment and switch between different Java versions.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/shyiko/jabba&quot;&gt;jabba&lt;/a&gt; - Java Version Manager inspired by nvm. Supports Mac OS X, Linux and Windows.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/gcuisinier/jenv&quot;&gt;jenv&lt;/a&gt; - Java Version Manager inspired by rbenv. Can configure globally or per project. Tested on Debian and Mac OS X.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/sdkman/sdkman-cli&quot;&gt;SDKMan&lt;/a&gt; - Java Version Manager inspired by RVM and rbenv. Supports UNIX-based platforms and Windows.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;web-crawling&quot;&gt;Web Crawling&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Libraries that analyze the content of websites.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://nutch.apache.org/&quot;&gt;Apache Nutch&lt;/a&gt; - Highly extensible, highly scalable web crawler for production environments.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/yasserg/crawler4j&quot;&gt;Crawler4j&lt;/a&gt; - Simple and lightweight web crawler.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jsoup.org/&quot;&gt;jsoup&lt;/a&gt; - Scrapes, parses, manipulates and cleans HTML.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://stormcrawler.net/&quot;&gt;StormCrawler&lt;/a&gt; - SDK for building low-latency and scalable web crawlers.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;web-frameworks&quot;&gt;Web Frameworks&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Frameworks that handle the communication between the layers of a web application.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://tapestry.apache.org/&quot;&gt;Apache Tapestry&lt;/a&gt; - Component-oriented framework for creating dynamic, robust, highly scalable web applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://wicket.apache.org/&quot;&gt;Apache Wicket&lt;/a&gt; - Component-based web application framework similar to Tapestry, with a stateful GUI.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/biezhi/blade&quot;&gt;Blade&lt;/a&gt; - Lightweight, modular framework that aims to be elegant and simple.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://bootique.io/&quot;&gt;Bootique&lt;/a&gt; - Minimally opinionated framework for runnable apps.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.fireflysource.com/&quot;&gt;Firefly&lt;/a&gt; - Asynchronous framework for rapid development of high-performance web application.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://grails.org/&quot;&gt;Grails&lt;/a&gt; - Groovy framework that provides a highly productive environment by favoring convention over configuration, no XML and support for mixins.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://jooby.org&quot;&gt;Jooby&lt;/a&gt; - Scalable, fast and modular micro-framework that offers multiple programming models.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.ninjaframework.org/&quot;&gt;Ninja&lt;/a&gt; - Full-stack web framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.pippo.ro/&quot;&gt;Pippo&lt;/a&gt; - Small, highly modularized, Sinatra-like framework.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.playframework.com/&quot;&gt;Play&lt;/a&gt; - Built on Akka, it provides predictable and minimal resource consumption (CPU, memory, threads) for highly-scalable applications in Java and Scala.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://primefaces.org/&quot;&gt;PrimeFaces&lt;/a&gt; - JSF framework with both free and commercial/support versions and frontend components.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://ratpack.io/&quot;&gt;Ratpack&lt;/a&gt; - Set of libraries that facilitate fast, efficient, evolvable and well-tested HTTP applications.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/yegor256/takes&quot;&gt;Takes&lt;/a&gt; - Opinionated web framework which is build around the concepts of True Object-Oriented Programming and immutablity.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vaadin.com/home&quot;&gt;Vaadin&lt;/a&gt; - Event-driven framework build on top of GWT. Uses server-side architecture with Ajax on the client side.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;resources&quot;&gt;Resources&lt;/h1&gt;
+
+&lt;h2 id=&quot;awesome-lists&quot;&gt;Awesome Lists&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Awesome lists related to the Java &amp;amp; JVM ecosystem.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ksoichiro/awesome-gradle&quot;&gt;Awesome Gradle Plugins&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mhrimaz/AwesomeJavaFX&quot;&gt;AwesomeJavaFX&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/deephacks/awesome-jvm&quot;&gt;Awesome JVM&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/mfornos/awesome-microservices&quot;&gt;Awesome Microservices&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/marmelab/awesome-rest&quot;&gt;Awesome REST&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/christian-bromann/awesome-selenium&quot;&gt;Awesome Selenium&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/ciandcd/awesome-ciandcd&quot;&gt;ciandcd&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Vedenin/useful-java-links&quot;&gt;Useful Java Links&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;communities&quot;&gt;Communities&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Active discussions.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.reddit.com/r/java&quot;&gt;r/java&lt;/a&gt; - Subreddit for the Java community.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/tagged/java&quot;&gt;stackoverflow&lt;/a&gt; - Question/answer platform.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://virtualjug.com/&quot;&gt;VirtualJUG&lt;/a&gt; - Virtual Java User Group.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;frontends&quot;&gt;Frontends&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Websites that provide a frontend for this list. Please note, there won’t be an official website. We don’t associate with a particular website and everybody is allowed to create one.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://java.libhunt.com/&quot;&gt;java.libhunt.com&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;influential-books&quot;&gt;Influential Books&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Books that made a big impact and are still worth reading.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.amazon.com/Core-Java-I-Fundamentals-10th/dp/0134177304&quot;&gt;Core Java Volume I–Fundamentals&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.amazon.com/Core-Java-II-Advanced-Features-10th/dp/0134177290&quot;&gt;Core Java, Volume II–Advanced Features&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.amazon.com/Effective-Java-Edition-Joshua-Bloch/dp/0321356683&quot;&gt;Effective Java (2nd Edition)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.amazon.com/Java-Concurrency-Practice-Brian-Goetz/dp/0321349601&quot;&gt;Java Concurrency in Practice&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.amazon.com/Thinking-Java-Edition-Bruce-Eckel/dp/0131872486&quot;&gt;Thinking in Java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;podcasts-and-screencasts&quot;&gt;Podcasts and Screencasts&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Something to look at or listen to while programming.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.javaoffheap.com/&quot;&gt;Java Off Heap&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.marcobehler.com/series&quot;&gt;Marco Behler’s Screencasts&lt;/a&gt; - Screencasts about modern Java development.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://virtualjug.com/podcast/&quot;&gt;The Java Council&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.javaposse.com/&quot;&gt;The Java Posse&lt;/a&gt; - Discontinued as of 02/2015.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;twitter&quot;&gt;Twitter&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Active accounts to follow. Descriptions from Twitter.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/AdamBien/&quot;&gt;Adam Bien&lt;/a&gt; - Freelance author, JavaOne Rockstar speaker, consultant, Java Champion.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/shipilev&quot;&gt;Aleksey Shipilëv&lt;/a&gt; - Performance geek, benchmarking czar, concurrency bug hunter.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/agoncal/&quot;&gt;Antonio Goncalves&lt;/a&gt; - Java Champion, JUG Leader, Devoxx France, Java EE 6/7, JCP, Author.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/arungupta/&quot;&gt;Arun Gupta&lt;/a&gt; - Java Champion, JavaOne Rockstar, JUG Leader, Devoxx4Kids-er, VP of Developer Advocacy at Couchbase.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/BrianGoetz&quot;&gt;Brian Goetz&lt;/a&gt; - Java Language Architect at Oracle.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/brunoborges&quot;&gt;Bruno Borges&lt;/a&gt; - Product Manager/Java Jock at Oracle.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/crichardson&quot;&gt;Chris Richardson&lt;/a&gt; - Software architect, consultant, and serial entrepreneur, Java Champion, JavaOne Rock Star, &lt;em&gt;POJOs in Action&lt;/em&gt; author.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/edburns&quot;&gt;Ed Burns&lt;/a&gt; - Consulting Member of the Technical Staff at Oracle.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/baeldung&quot;&gt;Eugen Paraschiv&lt;/a&gt; - Author of the Spring Security Course.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/heinzkabutz&quot;&gt;Heinz Kabutz&lt;/a&gt; - Java Champion, speaker, author of The Java Specialists’ Newsletter, concurrency performance expert.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/holly_cummins&quot;&gt;Holly Cummins&lt;/a&gt; - Technical Lead of IBM London’s Bluemix Garage, Java Champion, developer, author, JavaOne rockstar.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/JavaFXpert&quot;&gt;James Weaver&lt;/a&gt; - Java/JavaFX/IoT developer, author and speaker.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/Java_EE/&quot;&gt;Java EE&lt;/a&gt; - Official Java EE Twitter account.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/Oraclejavamag&quot;&gt;Java Magazine&lt;/a&gt; - Official Java Magazine account.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/java/&quot;&gt;Java&lt;/a&gt; - Official Java Twitter account.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/javinpaul&quot;&gt;Javin Paul&lt;/a&gt; - Well-known Java blogger.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/starbuxman&quot;&gt;Josh Long&lt;/a&gt; - Spring Advocate at Pivotal, author of O’Reilly’s &lt;em&gt;Cloud Native Java&lt;/em&gt; and &lt;em&gt;Building Microservices with Spring Boot&lt;/em&gt;, JavaOne Rock Star.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/lukaseder&quot;&gt;Lukas Eder&lt;/a&gt; - Java Champion, speaker, JUG.ch co-leader, Founder and CEO Data Geekery (jOOQ).&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/mariofusco&quot;&gt;Mario Fusco&lt;/a&gt; - RedHatter, JUG coordinator, frequent speaker and author.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/MkHeck&quot;&gt;Mark Heckler&lt;/a&gt; - Pivotal Principal Technologist and Developer Advocate, conference speaker, published author, and Java Champion, focusing on Internet of Things and the cloud.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/mreinhold&quot;&gt;Mark Reinhold&lt;/a&gt; - Chief Architect, Java Platform Group, Oracle.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/myfear&quot;&gt;Markus Eisele&lt;/a&gt; - Java EE evangelist, Red Hat.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/karianna&quot;&gt;Martijn Verburg&lt;/a&gt; - London JUG co-leader, speaker, author, Java Champion and much more.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/mjpt777&quot;&gt;Martin Thompson&lt;/a&gt; - Pasty faced performance gangster.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/mon_beck&quot;&gt;Monica Beckwith&lt;/a&gt; - Performance consultant, JavaOne Rock Star.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/OpenJDK&quot;&gt;OpenJDK&lt;/a&gt; - Official OpenJDK account.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/PeterLawrey&quot;&gt;Peter Lawrey&lt;/a&gt; - Peter Lawrey, Java performance expert.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/randyshoup&quot;&gt;Randy Shoup&lt;/a&gt; - Stitch Fix VP Engineering, speaker, JavaOne Rock Star.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/reza_rahman&quot;&gt;Reza Rahman&lt;/a&gt; - Java EE/GlassFish/WebLogic evangelist, author, speaker, open source hacker.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/sjmaple&quot;&gt;Simon Maple&lt;/a&gt; - Java Champion, VirtualJUG founder, LJC leader, RebelLabs author.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/jodastephen&quot;&gt;Stephen Colebourne&lt;/a&gt; - Java Champion, speaker.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/trisha_gee&quot;&gt;Trisha Gee&lt;/a&gt; - Java Champion and speaker.&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://twitter.com/venkat_s&quot;&gt;Venkat Subramaniam&lt;/a&gt; - Author, University of Houston professor, MicroSoft MVP award recipient, JavaOne Rock Star, Java Champion.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;websites&quot;&gt;Websites&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;Sites to read.&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://google.github.io/styleguide/javaguide.html&quot;&gt;Google Java Style&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.infoq.com/&quot;&gt;InfoQ&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://algs4.cs.princeton.edu/code/&quot;&gt;Java Algorithms and Clients&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://blog.jooq.org/&quot;&gt;Java, SQL, and jOOQ&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://community.oracle.com/community/java&quot;&gt;Java.net&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://dzone.com/java-jdk-development-tutorials-tools-news&quot;&gt;Javalobby&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.javaworld.com/&quot;&gt;JavaWorld&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jaxenter.com/&quot;&gt;JAXenter&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zeroturnaround.com/rebellabs/&quot;&gt;RebelLabs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://blog.takipi.com/&quot;&gt;The Takipi Blog&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.theserverside.com/&quot;&gt;TheServerSide.com&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://vanilla-java.github.io/&quot;&gt;Vanilla Java&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.voxxed.com/&quot;&gt;Voxxed&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h1 id=&quot;contributing&quot;&gt;Contributing&lt;/h1&gt;
+
+&lt;p&gt;Contributions are very welcome!&lt;/p&gt;
+
+&lt;p&gt;Please have a look at the &lt;a href=&quot;https://github.com/akullpp/awesome-java/blob/master/CONTRIBUTING.md&quot;&gt;CONTRIBUTING&lt;/a&gt; guidelines.&lt;/p&gt;
+
+</description>
+    </item>
+    
+    <item>
+      <title>Welcome to Jekyll!</title>
+      <link>place_your_blog_url_here/thought/2015/03/09/welcome-to-jekyll.html</link>
+      <pubDate>09 Mar 2015</pubDate>
+      <author>place_your_name_here</author>
+      <guid>place_your_blog_url_here/thought/2015/03/09/welcome-to-jekyll</guid>
+      <description>&lt;p&gt;You’ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+
+&lt;p&gt;To add new posts, simply add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+
+&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span&gt;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&amp;quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Tom&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints &amp;#39;Hi, Tom&amp;#39; to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://github.com/jekyll/jekyll-help&quot;&gt;Jekyll’s dedicated Help repository&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+    </item>
     
   </channel>
 </rss>
