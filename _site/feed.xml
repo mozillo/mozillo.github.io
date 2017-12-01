@@ -1,32 +1,4 @@
-<?xml version="1.0"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>place_your_blog_title_here</title>
-    <link>place_your_blog_url_here</link>
-    <atom:link href="place_your_blog_url_here/rss.xml" rel="self" type="application/rss+xml" />
-    <description>place_your_blog_description_here</description>
-    <language>place_your_blog_language_here</language>
-    <pubDate>Fri, 01 Dec 2017 13:05:40 +0800</pubDate>
-    <lastBuildDate>Fri, 01 Dec 2017 13:05:40 +0800</lastBuildDate>
-
-    
-    <item>
-      <title>Kube部署一个APP</title>
-      <link>place_your_blog_url_here/kube/2017/11/20/kube.html</link>
-      <pubDate>20 Nov 2017</pubDate>
-      <author>place_your_name_here</author>
-      <guid>place_your_blog_url_here/kube/2017/11/20/kube</guid>
-      <description>&lt;p&gt;Hello kube&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>R lang初步学习记录(1)</title>
-      <link>place_your_blog_url_here/java/2017/11/09/first-sign-r-lang.html</link>
-      <pubDate>09 Nov 2017</pubDate>
-      <author>place_your_name_here</author>
-      <guid>place_your_blog_url_here/java/2017/11/09/first-sign-r-lang</guid>
-      <description>&lt;h4 id=&quot;r的类型&quot;&gt;R的类型&lt;/h4&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.6.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2017-12-01T13:05:40+08:00</updated><id>http://localhost:4000/</id><entry><title type="html">Kube部署一个APP</title><link href="http://localhost:4000/kube/2017/11/20/kube.html" rel="alternate" type="text/html" title="Kube部署一个APP" /><published>2017-11-20T18:10:00+08:00</published><updated>2017-11-20T18:10:00+08:00</updated><id>http://localhost:4000/kube/2017/11/20/kube</id><content type="html" xml:base="http://localhost:4000/kube/2017/11/20/kube.html">&lt;p&gt;Hello kube&lt;/p&gt;</content><author><name></name></author><summary type="html">Hello kube</summary></entry><entry><title type="html">R lang初步学习记录(1)</title><link href="http://localhost:4000/java/2017/11/09/first-sign-r-lang.html" rel="alternate" type="text/html" title="R lang初步学习记录(1)" /><published>2017-11-09T06:21:49+08:00</published><updated>2017-11-09T06:21:49+08:00</updated><id>http://localhost:4000/java/2017/11/09/first-sign-r-lang</id><content type="html" xml:base="http://localhost:4000/java/2017/11/09/first-sign-r-lang.html">&lt;h4 id=&quot;r的类型&quot;&gt;R的类型&lt;/h4&gt;
 
 &lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-r&quot; data-lang=&quot;r&quot;&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;-&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;m&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
 &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;class&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;num&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -166,17 +138,7 @@ as.POSIXct converts a variety of data types to POSIXct. It also tries to be inte
 It makes sense that strptime is faster, because strptime only handles character input whilst the others try to determine which method to use from input type. It should also be a bit safer in that being handed unexpected data would just give an error, instead of trying to do the intelligent thing that might not be what you want.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/2017-11-30/shot3.png&quot; alt=&quot;My helpful screenshot&quot; /&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>用SpringBoot构建JavaAPP-上传提取Emails</title>
-      <link>place_your_blog_url_here/java/2017/11/09/build-with-spring-boot.html</link>
-      <pubDate>09 Nov 2017</pubDate>
-      <author>place_your_name_here</author>
-      <guid>place_your_blog_url_here/java/2017/11/09/build-with-spring-boot</guid>
-      <description>&lt;p&gt;构建一个JavaWeb项目变得很简单。现在只需要安装Spring Boot。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;http://localhost:4000/assets/2017-11-30/shot3.png&quot; alt=&quot;My helpful screenshot&quot; /&gt;&lt;/p&gt;</content><author><name></name></author><category term="R" /><category term="lang" /><summary type="html">R的类型</summary></entry><entry><title type="html">用SpringBoot构建JavaAPP-上传提取Emails</title><link href="http://localhost:4000/java/2017/11/09/build-with-spring-boot.html" rel="alternate" type="text/html" title="用SpringBoot构建JavaAPP-上传提取Emails" /><published>2017-11-09T06:21:49+08:00</published><updated>2017-11-09T06:21:49+08:00</updated><id>http://localhost:4000/java/2017/11/09/build-with-spring-boot</id><content type="html" xml:base="http://localhost:4000/java/2017/11/09/build-with-spring-boot.html">&lt;p&gt;构建一个JavaWeb项目变得很简单。现在只需要安装Spring Boot。&lt;/p&gt;
 
 &lt;p&gt;如果加上上传与解析的话。可以用来做一些文本处理的事情，比如提取Email列表。&lt;/p&gt;
 
@@ -280,18 +242,7 @@ It makes sense that strptime is faster, because strptime only handles character 
         &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
         &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;;&lt;/span&gt;
     &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Awesome Java</title>
-      <link>place_your_blog_url_here/java/2016/04/12/awesome-java.html</link>
-      <pubDate>12 Apr 2016</pubDate>
-      <author>place_your_name_here</author>
-      <guid>place_your_blog_url_here/java/2016/04/12/awesome-java</guid>
-      <description>&lt;p&gt;&lt;a href=&quot;https://github.com/sindresorhus/awesome&quot;&gt;&lt;img src=&quot;https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg&quot; alt=&quot;Awesome&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;</content><author><name></name></author><category term="Java" /><category term="感悟" /><summary type="html">构建一个JavaWeb项目变得很简单。现在只需要安装Spring Boot。</summary></entry><entry><title type="html">Awesome Java</title><link href="http://localhost:4000/java/2016/04/12/awesome-java.html" rel="alternate" type="text/html" title="Awesome Java" /><published>2016-04-12T16:00:00+08:00</published><updated>2016-04-12T16:00:00+08:00</updated><id>http://localhost:4000/java/2016/04/12/awesome-java</id><content type="html" xml:base="http://localhost:4000/java/2016/04/12/awesome-java.html">&lt;p&gt;&lt;a href=&quot;https://github.com/sindresorhus/awesome&quot;&gt;&lt;img src=&quot;https://cdn.rawgit.com/sindresorhus/awesome/d7305f38d29fed78fa85652e3a63e154dd8e8829/media/badge.svg&quot; alt=&quot;Awesome&quot; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;A curated list of awesome Java frameworks, libraries and software.&lt;/p&gt;
 
@@ -1459,18 +1410,7 @@ It makes sense that strptime is faster, because strptime only handles character 
 
 &lt;p&gt;Contributions are very welcome!&lt;/p&gt;
 
-&lt;p&gt;Please have a look at the &lt;a href=&quot;https://github.com/akullpp/awesome-java/blob/master/CONTRIBUTING.md&quot;&gt;CONTRIBUTING&lt;/a&gt; guidelines.&lt;/p&gt;
-
-</description>
-    </item>
-    
-    <item>
-      <title>Welcome to Jekyll!</title>
-      <link>place_your_blog_url_here/thought/2015/03/09/welcome-to-jekyll.html</link>
-      <pubDate>09 Mar 2015</pubDate>
-      <author>place_your_name_here</author>
-      <guid>place_your_blog_url_here/thought/2015/03/09/welcome-to-jekyll</guid>
-      <description>&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+&lt;p&gt;Please have a look at the &lt;a href=&quot;https://github.com/akullpp/awesome-java/blob/master/CONTRIBUTING.md&quot;&gt;CONTRIBUTING&lt;/a&gt; guidelines.&lt;/p&gt;</content><author><name></name></author><category term="awesome-java" /><summary type="html"></summary></entry><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/thought/2015/03/09/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2015-03-09T06:21:49+08:00</published><updated>2015-03-09T06:21:49+08:00</updated><id>http://localhost:4000/thought/2015/03/09/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/thought/2015/03/09/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
 
 &lt;p&gt;To add new posts, simply add a file in the &lt;code class=&quot;highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory that follows the convention &lt;code class=&quot;highlighter-rouge&quot;&gt;YYYY-MM-DD-name-of-post.ext&lt;/code&gt; and includes the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
 
@@ -1482,10 +1422,4 @@ It makes sense that strptime is faster, because strptime only handles character 
 &lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://github.com/jekyll/jekyll-help&quot;&gt;Jekyll’s dedicated Help repository&lt;/a&gt;.&lt;/p&gt;
-
-</description>
-    </item>
-    
-  </channel>
-</rss>
+&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://github.com/jekyll/jekyll-help&quot;&gt;Jekyll’s dedicated Help repository&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><category term="感悟" /><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry></feed>
